@@ -37,6 +37,10 @@
 
   time.timeZone = "Europe/Paris";
 
+  services.openssh = {
+    enable = true;
+  };
+
   services.xserver = {
     enable = false;
   };
@@ -82,7 +86,6 @@
     slurp
     wl-clipboard
     mako
-    rclone
     xdg-utils
     nixd
     nil
