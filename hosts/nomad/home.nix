@@ -24,7 +24,6 @@
   home.packages = with pkgs; [
     bun
     gemini-cli
-    zed-editor
     # # Adds the 'hello' command to your environment. It prints a friendly
     # # "Hello, world!" when run.
     # pkgs.hello
@@ -75,11 +74,10 @@
   #  /etc/profiles/per-user/ebaron/etc/profile.d/hm-session-vars.sh
   #
   home.sessionVariables = {
-    PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
     # EDITOR = "emacs";
   };
 
-  
+  systemd.user.sessionVariables = [ "PATH" ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
