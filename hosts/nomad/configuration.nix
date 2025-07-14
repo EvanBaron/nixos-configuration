@@ -11,6 +11,10 @@
     ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
     ../../modules/nixos/nvidia.nix
+    ../../modules/nixos/greetd.nix
+    ../../modules/nixos/sway.nix
+    ../../modules/nixos/virtualisation.nix
+    ../../modules/nixos/android-emulator.nix
   ];
 
   boot.loader = {
@@ -37,32 +41,18 @@
 
   time.timeZone = "Europe/Paris";
 
-  services.xserver = {
-    enable = false;
-  };
-
-  services.openssh = {
-    enable = true;
-  };
-
+  services.openssh.enable = true;
+  services.xserver.enable = false;
   services.gnome.gnome-keyring.enable = true;
-
-  services.greetd = {
-    enable = true;
-    settings = {
-      default_session = {
-        command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --cmd 'sway --unsupported-gpu'";
-        user = "ebaron";
-      };
-    };
-  };
 
   users.users.ebaron = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [
+      "wheel"
+      "fuse"
+      "docker"
+    ];
     packages = with pkgs; [
-      neovim
-      kitty
       tree
       btop
     ];
@@ -75,21 +65,14 @@
     };
   };
 
-  programs.sway = {
-    enable = true;
-    wrapperFeatures.gtk = true;
-  };
-
   environment.systemPackages = with pkgs; [
     wget
     grim
     slurp
     wl-clipboard
     mako
-    rclone
     xdg-utils
-    nixd
-    nil
+    neovim
   ];
 
   system.stateVersion = "25.05";

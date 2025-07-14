@@ -18,14 +18,15 @@
   home.stateVersion = "25.05";
 
   home.packages = with pkgs; [
+    nodejs
     bun
     gemini-cli
     zed-editor
+    nixd
+    nil
+    docker-compose
+    figma-linux
   ];
-
-  home.file = {
-
-  };
 
   home.sessionVariables = {
     PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
