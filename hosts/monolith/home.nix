@@ -9,6 +9,8 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rclone.nix
+    ../../modules/home-manager/zed.nix
+    ../../modules/home-manager/bash.nix
     inputs.zen-browser.homeModules.beta
   ];
 
@@ -17,19 +19,20 @@
 
   home.stateVersion = "25.05";
 
+  nixpkgs.config.allowUnfree = true;
+
   home.packages = with pkgs; [
     nodejs
     bun
     gemini-cli
-    zed-editor
     nixd
     nil
     docker-compose
     figma-linux
+    discord
   ];
   home.sessionVariables = {
     PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
-    EDITOR = "zeditor";
     DEFAULT_BROWSER = "zen-browser";
   };
 

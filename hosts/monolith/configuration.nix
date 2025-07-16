@@ -1,6 +1,4 @@
 {
-  config,
-  lib,
   pkgs,
   inputs,
   ...
@@ -44,6 +42,17 @@
   services.openssh.enable = true;
   services.xserver.enable = false;
   services.gnome.gnome-keyring.enable = true;
+  fonts = {
+    packages = with pkgs; [
+      fira
+      nerd-fonts.fira-code
+    ];
+    fontconfig.defaultFonts = {
+      serif = [ "Fira Sans" ];
+      sansSerif = [ "Fira Sans" ];
+      monospace = [ "Fira Code Nerd Font" ];
+    };
+  };
 
   users.users.ebaron = {
     isNormalUser = true;

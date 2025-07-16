@@ -9,6 +9,8 @@
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rclone.nix
+    ../../modules/home-manager/zed.nix
+    ../../modules/home-manager/bash.nix
     inputs.zen-browser.homeModules.beta
   ];
 
@@ -21,7 +23,6 @@
     nodejs
     bun
     gemini-cli
-    zed-editor
     nixd
     nil
     docker-compose
@@ -30,7 +31,6 @@
 
   home.sessionVariables = {
     PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
-    EDITOR = "zeditor";
     DEFAULT_BROWSER = "zen-browser";
   };
 

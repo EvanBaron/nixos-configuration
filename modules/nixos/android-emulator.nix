@@ -1,15 +1,17 @@
 { pkgs, ... }:
 
 {
-  programs.adb.enable = true;
   users.users.ebaron.extraGroups = [
     "kvm"
     "adbusers"
   ];
 
-  environment.systemPackages = [ pkgs.android-studio ];
+  environment.systemPackages = [
+    pkgs.android-studio
+    pkgs.android-tools
+  ];
 
   environment.sessionVariables = {
-    ANDROID_HOME = "/home/ebaron/Android/Sdk";
+    ANDROID_HOME = "${pkgs.android-tools}/share/android-sdk";
   };
 }
