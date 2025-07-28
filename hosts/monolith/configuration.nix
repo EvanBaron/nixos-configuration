@@ -13,6 +13,7 @@
     ../../modules/nixos/sway.nix
     ../../modules/nixos/virtualisation.nix
     ../../modules/nixos/android-emulator.nix
+    ../../modules/nixos/rust.nix
   ];
 
   boot.loader = {
