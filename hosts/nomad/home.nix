@@ -19,6 +19,8 @@
 
   home.stateVersion = "25.05";
 
+  nixpkgs.config.allowUnfree = true;
+
   home.packages = with pkgs; [
     nodejs
     bun
@@ -27,6 +29,7 @@
     nil
     docker-compose
     figma-linux
+    discord
   ];
 
   home.sessionVariables = {

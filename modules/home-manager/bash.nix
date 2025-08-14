@@ -1,3 +1,4 @@
+# Bash shell configuration with Starship prompt
 {
   programs.bash = {
     enable = true;
@@ -12,13 +13,16 @@
 
     settings = {
       add_newline = true;
+      # Custom prompt format: directory, git info, dev tools on right, character on new line
       format = "$directory$git_branch$git_status$fill$nix_shell$nodejs$bun$golang$rust$package\n$character";
 
+      # Prompt character styling
       character = {
         success_symbol = "[❯](bold green)";
         error_symbol = "[❯](bold red)";
       };
 
+      # Current directory styling
       directory = {
         style = "bold fg:cyan";
         home_symbol = "~";
@@ -26,12 +30,14 @@
         format = "[$path$read_only]($style) ";
       };
 
+      # Git branch indicator
       git_branch = {
         symbol = "";
         style = "bold fg:magenta";
         format = "[$symbol $branch]($style) ";
       };
 
+      # Git status indicators with symbols
       git_status = {
         style = "bold fg:red";
         format = "[$all_status$ahead_behind]($style) ";
@@ -51,11 +57,13 @@
         symbol = " ";
       };
 
+      # Nix shell indicator
       nix_shell = {
         symbol = "";
         style = "bold fg:blue";
         format = "[$symbol]($style) ";
       };
+      # Development environment indicators
       nodejs = {
         symbol = "";
         style = "bold fg:green";
