@@ -65,7 +65,6 @@
         "XDG_SESSION_TYPE=wayland"
         "XDG_SESSION_DESKTOP=sway"
         "XDG_CURRENT_DESKTOP=sway"
-        "WAYLAND_DISPLAY=wayland-1"
         "WLR_NO_HARDWARE_CURSORS=1"
       ];
     };
