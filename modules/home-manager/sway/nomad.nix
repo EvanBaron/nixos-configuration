@@ -221,24 +221,6 @@ in
   # ========================================================================
 
   wayland.windowManager.sway.extraConfig = ''
-    # Laptop-specific output management for external displays
-    # Automatically configure external displays when connected
-    exec_always {
-        # Check for external displays and configure them
-        if swaymsg -t get_outputs | grep -q "DP-"; then
-            # External display connected via DisplayPort
-            swaymsg output DP-1 enable
-            swaymsg output eDP-1 disable
-        elif swaymsg -t get_outputs | grep -q "HDMI-"; then
-            # External display connected via HDMI
-            swaymsg output HDMI-A-1 enable
-            swaymsg output eDP-1 disable
-        else
-            # Only laptop display
-            swaymsg output eDP-1 enable
-        fi
-    }
-
     # Auto-lock on lid close (requires systemd-logind)
     bindswitch --reload --locked lid:on exec ${pkgs.swaylock}/bin/swaylock -fF
 
@@ -284,6 +266,34 @@ in
   services = {
     mako = {
       enable = false;
+    };
+
+    kanshi = {
+      enable = true;
+      profiles = {
+        "laptop-only" = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              status = "enable";
+            }
+          ];
+        };
+        "external-display" = {
+          outputs = [
+            {
+              criteria = "eDP-1";
+              status = "disable";
+            }
+            {
+              # You may need to change this to match your external display's name
+              # (e.g., "DP-1" or "HDMI-A-1")
+              criteria = "DP-1";
+              status = "enable";
+            }
+          ];
+        };
+      };
     };
   };
 }
