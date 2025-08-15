@@ -18,54 +18,55 @@ let
       # Battery status
       battery_level=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1 || echo "?")
       battery_status=$(cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -1 || echo "Unknown")
-      if [ "$battery_status" = "Charging" ]; then
+      if [ "$battery_status" = "Charging" ];
+      then
         battery_icon="🔌"
-      elif [ "$battery_level" -gt 80 ]; then
+      elif [ "$battery_level" -gt 80 ];
+      then
         battery_icon="🔋"
-      elif [ "$battery_level" -gt 40 ]; then
+      elif [ "$battery_level" -gt 40 ];
+      then
         battery_icon="🪫"
       else
         battery_icon="🪫"
       fi
 
       # WiFi status
-      wifi_status=$(${pkgs.networkmanager}/bin/nmcli -t -f WIFI g | head -1)
-      if [ "$wifi_status" = "enabled" ]; then
-        wifi_connected=$(${pkgs.networkmanager}/bin/nmcli -t -f STATE g | head -1)
-        if [ "$wifi_connected" = "connected" ]; then
+      wifi_name=$(${pkgs.coreutils}/bin/timeout 2 ${pkgs.networkmanager}/bin/nmcli -t -f NAME c show --active | head -1)
+      if [ -n "$wifi_name" ]; then
           wifi_icon="📶"
-          wifi_name=$(${pkgs.networkmanager}/bin/nmcli -t -f NAME c show --active | head -1)
-        else
-          wifi_icon="📶"
-          wifi_name="Disconnected"
-        fi
       else
-        wifi_icon="📵"
-        wifi_name="Disabled"
+          wifi_icon="📵"
+          wifi_name="Disconnected"
       fi
 
       # Bluetooth status
-      bluetooth_status=$(${pkgs.bluez}/bin/bluetoothctl show 2>/dev/null | grep "Powered" | awk '{print $2}' || echo "no")
-      if [ "$bluetooth_status" = "yes" ]; then
+      bluetooth_powered=$(${pkgs.coreutils}/bin/timeout 2 ${pkgs.bluez}/bin/bluetoothctl show | grep "Powered" | awk '{print $2}')
+      if [ "$bluetooth_powered" = "yes" ];
+      then
         bluetooth_icon="🔵"
       else
         bluetooth_icon="⚫"
       fi
 
       # Volume status
-      volume=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}')
-      muted=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -o "MUTED" || echo "")
-      if [ "$muted" = "MUTED" ]; then
+      volume_line=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@)
+      volume=$(echo "$volume_line" | awk '{print int($2*100)}')
+      muted=$(echo "$volume_line" | grep -o "MUTED" || echo "")
+      if [ "$muted" = "MUTED" ];
+      then
         volume_icon="🔇"
-      elif [ "$volume" -gt 66 ]; then
+      elif [ "$volume" -gt 66 ];
+      then
         volume_icon="🔊"
-      elif [ "$volume" -gt 33 ]; then
+      elif [ "$volume" -gt 33 ];
+      then
         volume_icon="🔉"
       else
         volume_icon="🔈"
       fi
 
-      # Display all status information (Note: Stray '#' characters have been removed)
+      # Display all status information
       echo "$battery_icon $battery_level%  $wifi_icon $wifi_name  $bluetooth_icon  $volume_icon $volume%  🕐 $(date +'%H:%M')  📅 $(date +'%Y-%m-%d')"
       sleep 5
     done
