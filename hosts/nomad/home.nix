@@ -11,6 +11,7 @@
     ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/bash.nix
+    ../../modules/home-manager/sway/nomad.nix
     inputs.zen-browser.homeModules.beta
   ];
 

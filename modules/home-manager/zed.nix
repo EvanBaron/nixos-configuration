@@ -48,6 +48,6 @@
   };
 
   home.sessionVariables = {
-    EDITOR = "zeditor";
+    EDITOR = "zed";
   };
 }

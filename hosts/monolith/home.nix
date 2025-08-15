@@ -11,6 +11,7 @@
     ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/bash.nix
+    ../../modules/home-manager/sway/monolith.nix
     inputs.zen-browser.homeModules.beta
   ];
 
@@ -31,6 +32,7 @@
     figma-linux
     discord
   ];
+
   home.sessionVariables = {
     PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
     DEFAULT_BROWSER = "zen-browser";
