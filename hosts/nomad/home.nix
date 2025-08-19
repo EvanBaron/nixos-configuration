@@ -2,21 +2,25 @@
   config,
   pkgs,
   inputs,
+  user,
   ...
 }:
 
+let
+  theme = import ../../themes/nomad.nix;
+in
 {
   imports = [
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rclone.nix
-    ../../modules/home-manager/zed.nix
+    (import ../../modules/home-manager/zed.nix { inherit theme; })
     ../../modules/home-manager/bash.nix
     ../../modules/home-manager/sway/nomad.nix
     inputs.zen-browser.homeModules.beta
   ];
 
-  home.username = "ebaron";
-  home.homeDirectory = "/home/ebaron";
+  home.username = user.username;
+  home.homeDirectory = "/home/${user.username}";
 
   home.stateVersion = "25.05";
 

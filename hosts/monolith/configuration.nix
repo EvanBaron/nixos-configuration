@@ -3,11 +3,10 @@
 # ============================================================================
 
 {
+  config,
+  inputs,
   ...
 }:
-let
-  theme = import ../../themes/monolith.nix;
-in
 {
   # ========================================================================
   # SYSTEM IMPORTS AND HOST IDENTIFICATION
@@ -26,8 +25,13 @@ in
   # ========================================================================
 
   home-manager = {
+    extraSpecialArgs = {
+      inherit inputs;
+      user = config.user;
+    };
+
     users = {
-      "ebaron" = import ./home.nix;
+      "${config.user.username}" = import ./home.nix;
     };
   };
 }

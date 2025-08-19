@@ -14,10 +14,11 @@
 
   imports = [
     inputs.home-manager.nixosModules.default
+    ./user.nix
     ./nvidia.nix
     ./sway.nix
-    ./virtualisation.nix
-    ./android-emulator.nix
+    ./docker.nix
+    ./android.nix
     ./rust.nix
   ];
 
@@ -98,24 +99,6 @@
       sansSerif = [ "Fira Sans" ];
       monospace = [ "Fira Code Nerd Font" ];
     };
-  };
-
-  # ========================================================================
-  # USER ACCOUNT CONFIGURATION
-  # ========================================================================
-
-  users.users.ebaron = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "fuse"
-      "docker"
-    ];
-
-    packages = with pkgs; [
-      tree
-      btop
-    ];
   };
 
   # ========================================================================

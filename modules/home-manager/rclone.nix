@@ -1,7 +1,7 @@
 # Google Drive sync via rclone configuration
 # Setup: Run `rclone config` and create a 'gdrive' remote for Google Drive
 
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -17,10 +17,10 @@
     };
     Service = {
       Type = "simple";
-      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p /home/ebaron/Sync"; # Create mount directory
+      ExecStartPre = "${pkgs.coreutils}/bin/mkdir -p ${config.home.homeDirectory}/Sync"; # Create mount directory
       # Mount with aggressive caching for performance
-      ExecStart = "${pkgs.rclone}/bin/rclone mount gdrive:Sync /home/ebaron/Sync --dir-cache-time 48h --vfs-cache-max-age 48h --vfs-cache-mode full --vfs-cache-max-size 10G --vfs-read-chunk-size 16M --vfs-read-chunk-size-limit 1G --buffer-size 512M";
-      ExecStop = "${pkgs.util-linux}/bin/umount /home/ebaron/Sync";
+      ExecStart = "${pkgs.rclone}/bin/rclone mount gdrive:Sync ${config.home.homeDirectory}/Sync --dir-cache-time 48h --vfs-cache-max-age 48h --vfs-cache-mode full --vfs-cache-max-size 10G --vfs-read-chunk-size 16M --vfs-read-chunk-size-limit 1G --buffer-size 512M";
+      ExecStop = "${pkgs.util-linux}/bin/umount ${config.home.homeDirectory}/Sync";
       Restart = "on-failure";
       RestartSec = "10s";
       Environment = [ "PATH=${pkgs.fuse}/bin:/run/wrappers/bin/:$PATH" ]; # Include FUSE in PATH

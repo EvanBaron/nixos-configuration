@@ -1,4 +1,5 @@
 # Zed editor configuration with development extensions and theming
+{ theme }:
 {
   pkgs,
   lib,
@@ -39,11 +40,7 @@
       buffer_font_family = "FiraCode Nerd Font Mono";
 
       # Theme configuration
-      theme = {
-        mode = "system";
-        light = "Gruvbox Dark Soft";
-        dark = "One Dark";
-      };
+      theme = theme.zed;
     };
   };
 

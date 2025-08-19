@@ -90,7 +90,11 @@
   # ========================================================================
 
   name = "Nomad Teal";
-  description = "Cool teal and sage theme matching nomad wallpaper";
-  author = "Generated from wallpaper color analysis";
   host = "nomad";
+
+  # ========================================================================
+  # OTHER
+  # ========================================================================
+
+  zed = "One Dark Pro";
 }

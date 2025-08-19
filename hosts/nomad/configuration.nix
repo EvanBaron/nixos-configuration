@@ -3,11 +3,10 @@
 # ============================================================================
 
 {
+  config,
+  inputs,
   ...
 }:
-let
-  theme = import ../../themes/nomad.nix;
-in
 {
   # ========================================================================
   # SYSTEM IMPORTS AND HOST IDENTIFICATION
@@ -21,13 +20,21 @@ in
 
   networking.hostName = "nomad";
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   # ========================================================================
   # HOME MANAGER INTEGRATION
   # ========================================================================
 
   home-manager = {
+    extraSpecialArgs = {
+      inherit inputs;
+      user = config.user;
+    };
+
     users = {
-      "ebaron" = import ./home.nix;
+      "${config.user.username}" = import ./home.nix;
     };
   };
 }

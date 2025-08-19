@@ -90,7 +90,11 @@
   # ========================================================================
 
   name = "Monolith Olive";
-  description = "Warm olive and yellow-green theme matching monolith wallpaper";
-  author = "Generated from wallpaper color analysis";
   host = "monolith";
+
+  # ========================================================================
+  # OTHER
+  # ========================================================================
+
+  zed = "Gruvbox Dark Soft";
 }

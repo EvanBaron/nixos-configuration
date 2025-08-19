@@ -2,12 +2,6 @@
 { pkgs, ... }:
 
 {
-  # Add user to required groups for Android development
-  users.users.ebaron.extraGroups = [
-    "kvm"
-    "adbusers"
-  ];
-
   # Install Android development tools
   environment.systemPackages = [
     pkgs.android-studio

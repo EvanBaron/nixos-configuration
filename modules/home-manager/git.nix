@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  config,
+  pkgs,
+  user,
+  ...
+}:
 
 {
   home.packages = with pkgs; [
@@ -7,8 +12,8 @@
 
   programs.git = {
     enable = true;
-    userName = "ebaron";
-    userEmail = "evanbaron.a4@gmail.com";
+    userName = config.home.username;
+    userEmail = user.email;
 
     extraConfig = {
       core = {
