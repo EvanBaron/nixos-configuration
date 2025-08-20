@@ -3,12 +3,11 @@
 # ============================================================================
 
 {
+  config,
   pkgs,
   ...
 }:
 let
-  theme = import ../../../themes/monolith.nix;
-
   statusBarScript = pkgs.writeShellScript "sway-monolith-status.sh" ''
     while true;
     do
@@ -37,7 +36,7 @@ in
   # ========================================================================
 
   imports = [
-    (import ./default.nix { inherit theme; })
+    ./default.nix
   ];
 
   # ========================================================================
@@ -63,33 +62,33 @@ in
       {
         position = "top";
         fonts = {
-          names = [ theme.fonts.ui ];
-          size = theme.fonts.size * 1.0;
+          names = [ "Fira Code Nerd Font" ];
+          size = 11.0;
         };
         statusCommand = "${statusBarScript}";
         colors = {
-          background = theme.colors.background;
-          statusline = theme.colors.text.primary;
-          separator = theme.colors.secondary;
+          background = "#${config.colorScheme.palette.base00}";
+          statusline = "#${config.colorScheme.palette.base05}";
+          separator = "#${config.colorScheme.palette.base03}";
           focusedWorkspace = {
-            background = theme.colors.workspace.focused.background;
-            border = theme.colors.workspace.focused.background;
-            text = theme.colors.workspace.focused.foreground;
+            background = "#${config.colorScheme.palette.base02}";
+            border = "#${config.colorScheme.palette.base02}";
+            text = "#${config.colorScheme.palette.base05}";
           };
           activeWorkspace = {
-            background = theme.colors.workspace.active.background;
-            border = theme.colors.workspace.active.background;
-            text = theme.colors.workspace.active.foreground;
+            background = "#${config.colorScheme.palette.base01}";
+            border = "#${config.colorScheme.palette.base01}";
+            text = "#${config.colorScheme.palette.base04}";
           };
           inactiveWorkspace = {
-            background = theme.colors.workspace.inactive.background;
-            border = theme.colors.workspace.inactive.background;
-            text = theme.colors.workspace.inactive.foreground;
+            background = "#${config.colorScheme.palette.base00}";
+            border = "#${config.colorScheme.palette.base00}";
+            text = "#${config.colorScheme.palette.base03}";
           };
           urgentWorkspace = {
-            background = theme.colors.workspace.urgent.background;
-            border = theme.colors.workspace.urgent.background;
-            text = theme.colors.workspace.urgent.foreground;
+            background = "#${config.colorScheme.palette.base08}";
+            border = "#${config.colorScheme.palette.base08}";
+            text = "#${config.colorScheme.palette.base07}";
           };
         };
       }

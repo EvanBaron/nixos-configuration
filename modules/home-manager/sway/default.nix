@@ -2,7 +2,6 @@
 # STRUCTURED SWAY CONFIGURATION - HOME MANAGER MODULE
 # ============================================================================
 
-{ theme }:
 {
   config,
   lib,
@@ -39,8 +38,8 @@
 
       # Font configuration
       fonts = {
-        names = [ theme.fonts.ui ];
-        size = theme.fonts.size * 1.0;
+        names = [ "Fira Code Nerd Font" ];
+        size = 11.0;
       };
 
       # ====================================================================
@@ -75,39 +74,39 @@
 
       colors = {
         focused = {
-          background = theme.colors.border.focused;
-          border = theme.colors.border.focused;
-          childBorder = theme.colors.border.focused;
-          indicator = theme.colors.secondary;
-          text = theme.colors.text.onPrimary;
+          background = "#${config.colorScheme.palette.base02}";
+          border = "#${config.colorScheme.palette.base0D}";
+          childBorder = "#${config.colorScheme.palette.base0D}";
+          indicator = "#${config.colorScheme.palette.base0D}";
+          text = "#${config.colorScheme.palette.base07}";
         };
         focusedInactive = {
-          background = theme.colors.border.inactive;
-          border = theme.colors.border.inactive;
-          childBorder = theme.colors.border.inactive;
-          indicator = theme.colors.border.inactive;
-          text = theme.colors.text.primary;
+          background = "#${config.colorScheme.palette.base01}";
+          border = "#${config.colorScheme.palette.base01}";
+          childBorder = "#${config.colorScheme.palette.base01}";
+          indicator = "#${config.colorScheme.palette.base03}";
+          text = "#${config.colorScheme.palette.base05}";
         };
         unfocused = {
-          background = theme.colors.border.unfocused;
-          border = theme.colors.border.unfocused;
-          childBorder = theme.colors.border.unfocused;
-          indicator = theme.colors.border.unfocused;
-          text = theme.colors.text.secondary;
+          background = "#${config.colorScheme.palette.base00}";
+          border = "#${config.colorScheme.palette.base00}";
+          childBorder = "#${config.colorScheme.palette.base00}";
+          indicator = "#${config.colorScheme.palette.base00}";
+          text = "#${config.colorScheme.palette.base04}";
         };
         urgent = {
-          background = theme.colors.border.urgent;
-          border = theme.colors.border.urgent;
-          childBorder = theme.colors.border.urgent;
-          indicator = theme.colors.border.urgent;
-          text = theme.colors.text.onPrimary;
+          background = "#${config.colorScheme.palette.base08}";
+          border = "#${config.colorScheme.palette.base08}";
+          childBorder = "#${config.colorScheme.palette.base08}";
+          indicator = "#${config.colorScheme.palette.base08}";
+          text = "#${config.colorScheme.palette.base07}";
         };
         placeholder = {
-          background = theme.colors.background;
-          border = theme.colors.background;
-          childBorder = theme.colors.background;
-          indicator = theme.colors.background;
-          text = theme.colors.text.primary;
+          background = "#${config.colorScheme.palette.base00}";
+          border = "#${config.colorScheme.palette.base00}";
+          childBorder = "#${config.colorScheme.palette.base00}";
+          indicator = "#${config.colorScheme.palette.base00}";
+          text = "#${config.colorScheme.palette.base05}";
         };
       };
 
@@ -123,7 +122,7 @@
           # Application launching
           "${modifier}+Return" = "exec ${pkgs.foot}/bin/foot";
           "${modifier}+d" =
-            "exec ${pkgs.wmenu}/bin/wmenu-run -f '${theme.fonts.ui} ${toString theme.fonts.size}' -N '${theme.colors.menu.background}' -n '${theme.colors.menu.foreground}' -M '${theme.colors.menu.selected.background}' -m '${theme.colors.menu.selected.foreground}' -S '${theme.colors.menu.highlight.background}' -s '${theme.colors.menu.highlight.foreground}'";
+            "exec ${pkgs.wmenu}/bin/wmenu-run -f 'Fira Code Nerd Font 11' -N '#${config.colorScheme.palette.base00}' -n '#${config.colorScheme.palette.base05}' -M '#${config.colorScheme.palette.base02}' -m '#${config.colorScheme.palette.base07}' -S '#${config.colorScheme.palette.base0D}' -s '#${config.colorScheme.palette.base07}'";
 
           # Window management
           "${modifier}+Shift+q" = "kill";
@@ -166,7 +165,7 @@
           # Screenshots
           "Print" =
             "exec ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy";
-          "${modifier}+Print" = "exec ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy";
+          "${modifier}+Print" = "exec ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-.copy";
 
           # Volume controls with notifications
           "XF86AudioRaiseVolume" =
@@ -188,7 +187,7 @@
 
           # Audio device switching
           "${modifier}+Shift+a" =
-            "exec ${pkgs.wireplumber}/bin/wpctl set-default $(${pkgs.wireplumber}/bin/wpctl status | grep 'Audio/Sink' | head -2 | tail -1 | awk '{print $2}' | sed 's/\\.//') && ${pkgs.libnotify}/bin/notify-send 'Audio' 'Switched output device'";
+            "exec ${pkgs.wireplumber}/bin/wpctl set-default $(${pkgs.wireplumber}/bin/wpctl status | grep 'Audio/Sink' | head -2 | tail -1 | awk '{print $2}' | sed 's/\.//') && ${pkgs.libnotify}/bin/notify-send 'Audio' 'Switched output device'";
 
           # Audio control GUI
           "${modifier}+a" = "exec ${pkgs.pavucontrol}/bin/pavucontrol";
@@ -232,7 +231,7 @@
         {
           command = "border pixel 2";
           criteria = {
-            app_id = "^.*";
+            app_id = ".*\.";
           };
         }
       ];

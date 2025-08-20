@@ -6,18 +6,19 @@
   ...
 }:
 
-let
-  theme = import ../../themes/monolith.nix;
-in
 {
   imports = [
+    inputs.nix-colors.homeManagerModules.default
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rclone.nix
-    (import ../../modules/home-manager/zed.nix { inherit theme; })
+    ../../modules/home-manager/zed.nix
+    ../../modules/home-manager/cursor.nix
     ../../modules/home-manager/bash.nix
     ../../modules/home-manager/sway/monolith.nix
     inputs.zen-browser.homeModules.beta
   ];
+
+  colorScheme = import ../../themes/monolith.nix;
 
   home.username = user.username;
   home.homeDirectory = "/home/${user.username}";

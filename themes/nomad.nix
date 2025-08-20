@@ -1,100 +1,25 @@
-# ============================================================================
-# NOMAD THEME - Teal/Sage Color Scheme
-# ============================================================================
-
 {
-  colors = {
-    # ------------------------------------------------------------------------
-    # Base Color Palette
-    # These are the fundamental colors extracted from the wallpaper
-    # ------------------------------------------------------------------------
-    background = "#1D2021"; # Dark charcoal base for all backgrounds
-    primary = "#009A9B"; # Vibrant teal for accents and focus
-    secondary = "#84A698"; # Sage green for secondary elements
-    urgent = "#CC241D"; # Standard red for alerts and urgent states
-
-    # ------------------------------------------------------------------------
-    # Text Color Mappings
-    # Semantic color assignments for different text contexts
-    # ------------------------------------------------------------------------
-    text = {
-      primary = "#009A9B"; # Main text color (vibrant teal)
-      secondary = "#84A698"; # Muted text (sage green)
-      onPrimary = "#1D2021"; # Dark text on bright teal backgrounds
-      onBackground = "#009A9B"; # Bright text on dark backgrounds
-    };
-
-    # ------------------------------------------------------------------------
-    # Window Border Colors
-    # Used for Sway window decorations based on focus state
-    # ------------------------------------------------------------------------
-    border = {
-      focused = "#009A9B"; # Active window borders (vibrant teal)
-      inactive = "#84A698"; # Inactive but visible window borders
-      unfocused = "#1D2021"; # Completely unfocused windows (blend in)
-      urgent = "#CC241D"; # Windows requiring attention (red)
-    };
-
-    # ------------------------------------------------------------------------
-    # Workspace Indicator Colors
-    # Status bar workspace button styling (includes battery info)
-    # ------------------------------------------------------------------------
-    workspace = {
-      focused = {
-        background = "#009A9B"; # Current workspace background
-        foreground = "#1D2021"; # Current workspace text
-      };
-      active = {
-        background = "#84A698"; # Active but not current workspace
-        foreground = "#1D2021"; # Active workspace text
-      };
-      inactive = {
-        background = "#1D2021"; # Inactive workspace background
-        foreground = "#84A698"; # Inactive workspace text
-      };
-      urgent = {
-        background = "#CC241D"; # Urgent workspace background
-        foreground = "#1D2021"; # Urgent workspace text
-      };
-    };
-
-    # ------------------------------------------------------------------------
-    # Application Launcher Colors
-    # wmenu styling to match the overall theme
-    # ------------------------------------------------------------------------
-    menu = {
-      background = "#1D2021"; # Launcher background
-      foreground = "#84A698"; # Default text color
-      selected = {
-        background = "#009A9B"; # Selected item background
-        foreground = "#1D2021"; # Selected item text
-      };
-      highlight = {
-        background = "#009A9B"; # Search match highlighting
-        foreground = "#1D2021"; # Highlight text color
-      };
-    };
-  };
-
-  # ========================================================================
-  # TYPOGRAPHY CONFIGURATION
-  # ========================================================================
-
-  fonts = {
-    ui = "Fira Code Nerd Font";
-    size = 11;
-  };
-
-  # ========================================================================
-  # THEME METADATA
-  # ========================================================================
+  # Nomad Teal theme for nix-colors
+  # Based on the original theme by the user
 
   name = "Nomad Teal";
-  host = "nomad";
 
-  # ========================================================================
-  # OTHER
-  # ========================================================================
-
-  zed = "One Dark Pro";
+  palette = {
+    base00 = "1D2021"; # background
+    base01 = "2c3132"; # slightly lighter background for UI elements
+    base02 = "3c4142"; # selection background
+    base03 = "84A698"; # comments, secondary text
+    base04 = "94a09c"; # darker foreground for UI
+    base05 = "009A9B"; # main foreground text
+    base06 = "00b8b9"; # lighter foreground
+    base07 = "00d6d7"; # lightest foreground
+    base08 = "CC241D"; # urgent, red
+    base09 = "D65D0E"; # orange
+    base0A = "D79921"; # yellow
+    base0B = "878313"; # green
+    base0C = "009A9B"; # cyan
+    base0D = "458588"; # blue
+    base0E = "B16286"; # magenta
+    base0F = "7C6F64"; # brown
+  };
 }
