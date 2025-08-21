@@ -43,6 +43,7 @@
   home.sessionVariables = {
     PATH = "${config.home.homeDirectory}/.local/bin:$PATH";
     DEFAULT_BROWSER = "zen-browser";
+    WAYLAND_DISPLAY = ""; # Without this variable, zed freezes on launch
   };
 
   programs.home-manager.enable = true;

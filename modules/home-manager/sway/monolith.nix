@@ -36,11 +36,4 @@
 
     bars = [ ];
   };
-
-  programs.waybar.settings.mainBar."modules-right" = [
-    "pulseaudio"
-    "cpu"
-    "memory"
-    "tray"
-  ];
 }
