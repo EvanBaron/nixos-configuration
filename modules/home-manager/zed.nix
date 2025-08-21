@@ -191,27 +191,27 @@ let
                 font_weight = null;
               };
               punctuation = {
-                color = "#${config.colorScheme.palette.base04}";
+                color = "#${config.colorScheme.palette.base03}";
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.bracket" = {
-                color = "#${config.colorScheme.palette.base04}";
+                color = "#${config.colorScheme.palette.base03}";
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.delimiter" = {
-                color = "#${config.colorScheme.palette.base04}";
+                color = null;
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.list_marker" = {
-                color = "#${config.colorScheme.palette.base04}";
+                color = "#${config.colorScheme.palette.base03}";
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.special" = {
-                color = "#${config.colorScheme.palette.base04}";
+                color = "#${config.colorScheme.palette.base08}";
                 font_style = null;
                 font_weight = null;
               };
