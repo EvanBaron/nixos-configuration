@@ -9,13 +9,15 @@
 {
   imports = [
     inputs.nix-colors.homeManagerModules.default
+    inputs.zen-browser.homeModules.beta
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/cursor.nix
     ../../modules/home-manager/bash.nix
     ../../modules/home-manager/sway/nomad.nix
-    inputs.zen-browser.homeModules.beta
+    ../../modules/home-manager/zen.nix
+    ../../modules/home-manager/foot.nix
   ];
 
   colorScheme = import ../../themes/nomad.nix;
@@ -44,5 +46,4 @@
   };
 
   programs.home-manager.enable = true;
-  programs.zen-browser.enable = true;
 }

@@ -8,68 +8,6 @@
   lib,
   ...
 }:
-let
-  statusBarScript = pkgs.writeShellScript "sway-nomad-status.sh" ''
-    #!${pkgs.stdenv.shell}
-    while true;
-    do
-      # Battery status
-      battery_level=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1 || echo "?")
-      battery_status=$(cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -1 || echo "Unknown")
-      if [ "$battery_status" = "Charging" ];
-      then
-        battery_icon="🔌"
-      elif [ "$battery_level" -gt 80 ];
-      then
-        battery_icon="🔋"
-      elif [ "$battery_level" -gt 40 ];
-      then
-        battery_icon="🪫"
-      else
-        battery_icon="🪫"
-      fi
-
-      # WiFi status
-      wifi_name=$(${pkgs.coreutils}/bin/timeout 2 ${pkgs.networkmanager}/bin/nmcli -t -f NAME c show --active | head -1)
-      if [ -n "$wifi_name" ]; then
-          wifi_icon="📶"
-      else
-          wifi_icon="📵"
-          wifi_name="Disconnected"
-      fi
-
-      # Bluetooth status
-      bluetooth_powered=$(${pkgs.coreutils}/bin/timeout 2 ${pkgs.bluez}/bin/bluetoothctl show | grep "Powered" | awk '{print $2}')
-      if [ "$bluetooth_powered" = "yes" ];
-      then
-        bluetooth_icon="🔵"
-      else
-        bluetooth_icon="⚫"
-      fi
-
-      # Volume status
-      volume_line=$(${pkgs.wireplumber}/bin/wpctl get-volume @DEFAULT_AUDIO_SINK@)
-      volume=$(echo "$volume_line" | awk '{print int($2*100)}')
-      muted=$(echo "$volume_line" | grep -o "MUTED" || echo "")
-      if [ "$muted" = "MUTED" ];
-      then
-        volume_icon="🔇"
-      elif [ "$volume" -gt 66 ];
-      then
-        volume_icon="🔊"
-      elif [ "$volume" -gt 33 ];
-      then
-        volume_icon="🔉"
-      else
-        volume_icon="🔈"
-      fi
-
-      # Display all status information
-      echo "$battery_icon $battery_level%  $wifi_icon $wifi_name  $bluetooth_icon  $volume_icon $volume%  🕐 $(date +'%H:%M')  📅 $(date +'%Y-%m-%d')"
-      sleep 5
-    done
-  '';
-in
 {
   # ========================================================================
   # IMPORT BASE SWAY CONFIGURATION
@@ -77,6 +15,7 @@ in
 
   imports = [
     ./default.nix
+    ./waybar.nix
   ];
 
   # ========================================================================
@@ -130,41 +69,7 @@ in
     # STATUS BAR CONFIGURATION - LAPTOP
     # ======================================================================
 
-    bars = [
-      {
-        position = "top";
-        fonts = {
-          names = [ "Fira Code Nerd Font" ];
-          size = 11.0;
-        };
-        statusCommand = "${statusBarScript}";
-        colors = {
-          background = "#${config.colorScheme.palette.base00}";
-          statusline = "#${config.colorScheme.palette.base05}";
-          separator = "#${config.colorScheme.palette.base03}";
-          focusedWorkspace = {
-            background = "#${config.colorScheme.palette.base02}";
-            border = "#${config.colorScheme.palette.base02}";
-            text = "#${config.colorScheme.palette.base05}";
-          };
-          activeWorkspace = {
-            background = "#${config.colorScheme.palette.base01}";
-            border = "#${config.colorScheme.palette.base01}";
-            text = "#${config.colorScheme.palette.base04}";
-          };
-          inactiveWorkspace = {
-            background = "#${config.colorScheme.palette.base00}";
-            border = "#${config.colorScheme.palette.base00}";
-            text = "#${config.colorScheme.palette.base03}";
-          };
-          urgentWorkspace = {
-            background = "#${config.colorScheme.palette.base08}";
-            border = "#${config.colorScheme.palette.base08}";
-            text = "#${config.colorScheme.palette.base07}";
-          };
-        };
-      }
-    ];
+    bars = [ ];
 
     # ======================================================================
     # LAPTOP-SPECIFIC INPUT CONFIGURATION

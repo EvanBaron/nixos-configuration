@@ -28,7 +28,6 @@
   wayland.windowManager.sway = {
     enable = true;
     package = null;
-
     config = {
       # ====================================================================
       # BASIC CONFIGURATION
@@ -165,7 +164,7 @@
           # Screenshots
           "Print" =
             "exec ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy";
-          "${modifier}+Print" = "exec ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-.copy";
+          "${modifier}+Print" = "exec ${pkgs.grim}/bin/grim - | ${pkgs.wl-clipboard}/bin/wl-copy";
 
           # Volume controls with notifications
           "XF86AudioRaiseVolume" =
@@ -231,16 +230,14 @@
         {
           command = "border pixel 2";
           criteria = {
-            app_id = ".*\.";
+            app_id = ".*\ases";
           };
         }
       ];
-
-      # ====================================================================
-      # STATUS BAR CONFIGURATION
-      # ====================================================================
-
     };
+    extraConfig = ''
+      exec waybar
+    '';
   };
 
   # ========================================================================
@@ -251,9 +248,8 @@
     pavucontrol
     pulseaudio
     alsa-utils
-
     libnotify
-
     playerctl
+    waybar
   ];
 }
