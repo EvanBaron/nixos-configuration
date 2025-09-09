@@ -18,7 +18,6 @@
     ../../modules/home-manager/sway/nomad.nix
     ../../modules/home-manager/zen.nix
     ../../modules/home-manager/foot.nix
-    ../../modules/home-manager/afs.nix
   ];
 
   colorScheme = import ../../themes/nomad.nix;
