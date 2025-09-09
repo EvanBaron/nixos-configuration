@@ -15,7 +15,6 @@
   imports = [
     inputs.home-manager.nixosModules.default
     ./user.nix
-    ./nvidia.nix
     ./sway.nix
     ./docker.nix
     ./android.nix
@@ -49,6 +48,12 @@
     "nix-command"
     "flakes"
   ];
+
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
 
   # ========================================================================
   # NETWORKING CONFIGURATION

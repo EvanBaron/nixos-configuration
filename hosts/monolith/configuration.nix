@@ -16,6 +16,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/shared.nix
     ../../modules/nixos/tuigreet.nix
+    ../../modules/nixos/nvidia/monolith.nix
   ];
 
   networking.hostName = "monolith";
