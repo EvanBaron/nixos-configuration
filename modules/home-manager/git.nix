@@ -26,4 +26,17 @@
       pull.rebase = true;
     };
   };
+
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      # Personal
+      "github.com" = {
+        hostname = "github.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+      };
+    };
+  };
 }

@@ -43,8 +43,8 @@
       in
       lib.mkOptionDefault {
         # Brightness controls
-        "XF86MonBrightnessDown" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
-        "XF86MonBrightnessUp" = "exec ${pkgs.brightnessctl}/bin/brightnessctl set 5%+";
+        "XF86MonBrightnessDown" = "exec light -U 5";
+        "XF86MonBrightnessUp" = "exec light -A 5";
 
         # Power management
         "${modifier}+F4" = "exec systemctl suspend";
@@ -152,7 +152,6 @@
 
   home.packages = with pkgs; [
     # Power management
-    brightnessctl
     powertop
 
     # Network management

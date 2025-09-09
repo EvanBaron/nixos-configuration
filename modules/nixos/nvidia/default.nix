@@ -1,4 +1,4 @@
-# NVIDIA GPU drivers configuration
+# Base NVIDIA GPU drivers configuration
 { config, ... }:
 
 {
@@ -7,20 +7,19 @@
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  boot.initrd.availableKernelModules = [
+  boot.kernelModules = [
     "nvidia"
     "nvidia_modeset"
     "nvidia_uvm"
     "nvidia_drm"
+    "i2c_nvidia_gpu"
+    "i2c_core"
   ];
 
   boot.kernelParams = [ "nvidia-drm.modeset=1" ];
 
   hardware.nvidia = {
     modesetting.enable = true;
-
-    powerManagement.enable = false;
-    powerManagement.finegrained = false;
 
     open = false;
 
