@@ -8,6 +8,9 @@
 {
   home.packages = with pkgs; [
     git
+    krb5
+    sshfs-fuse
+    openssh_gssapi
   ];
 
   programs.git = {
@@ -31,6 +34,14 @@
     enable = true;
     matchBlocks = {
       # EPITA
+      "ssh.cri.epita.fr" = {
+        hostname = "ssh.cri.epita.fr";
+        extraOptions = {
+          GSSAPIAuthentication = "yes";
+          GSSAPIDelegateCredentials = "yes";
+          PreferredAuthentications = "gssapi-with-mic";
+        };
+      };
       "git.forge.epita.fr" = {
         hostname = "git.forge.epita.fr";
         user = "evan.baron";

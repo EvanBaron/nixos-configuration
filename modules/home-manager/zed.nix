@@ -296,6 +296,8 @@ in
       "make"
       "json"
       "markdown"
+      "c"
+      "cpp"
     ];
 
     userSettings = {
@@ -322,10 +324,28 @@ in
       ui_font_size = 12;
       buffer_font_size = 10;
       buffer_font_family = "FiraCode Nerd Font Mono";
+
+      language_overrides = {
+        Rust = {
+          language_server = {
+            external = true;
+            command = "rust-analyzer";
+          };
+        };
+        C = {
+          language_server = {
+            external = true;
+            command = "clangd";
+          };
+        };
+        "C++" = {
+          language_server = {
+            external = true;
+            command = "clangd";
+          };
+        };
+      };
     };
   };
 
-  home.sessionVariables = {
-    EDITOR = "zed";
-  };
 }

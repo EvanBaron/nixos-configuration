@@ -18,6 +18,7 @@
     ../../modules/home-manager/sway/monolith.nix
     ../../modules/home-manager/zen.nix
     ../../modules/home-manager/foot.nix
+    ../../modules/home-manager/neovim.nix
   ];
 
   colorScheme = import ../../themes/monolith.nix;
