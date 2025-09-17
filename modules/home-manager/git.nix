@@ -8,6 +8,9 @@
 {
   home.packages = with pkgs; [
     git
+    krb5
+    sshfs-fuse
+    openssh_gssapi
   ];
 
   programs.git = {
