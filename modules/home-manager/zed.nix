@@ -298,6 +298,7 @@ in
       "markdown"
       "c"
       "cpp"
+      "python"
     ];
 
     userSettings = {
@@ -342,6 +343,18 @@ in
           language_server = {
             external = true;
             command = "clangd";
+          };
+        };
+        Python = {
+          language_server = {
+            external = true;
+            command = "pylsp";
+          };
+          formatter = {
+            external = {
+              command = "black";
+              arguments = [ "-" ];
+            };
           };
         };
       };

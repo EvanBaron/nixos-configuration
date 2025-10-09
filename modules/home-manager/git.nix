@@ -48,6 +48,12 @@
         identityFile = "~/.ssh/id_ed25519_studies";
         identitiesOnly = true;
       };
+      "gitlab.com" = {
+        hostname = "gitlab.com";
+        user = "evan.baron";
+        identityFile = "~/.ssh/id_ed25519_studies";
+        identitiesOnly = true;
+      };
       # Personal
       "github.com" = {
         hostname = "github.com";
