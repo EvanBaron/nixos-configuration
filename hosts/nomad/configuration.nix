@@ -17,6 +17,7 @@
     ../../modules/nixos/shared.nix
     ../../modules/nixos/tuigreet.nix
     ../../modules/nixos/nvidia/nomad.nix
+    ../../modules/nixos/steam.nix
   ];
 
   networking.hostName = "nomad";

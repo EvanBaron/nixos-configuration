@@ -19,6 +19,7 @@
     ../../modules/home-manager/zen.nix
     ../../modules/home-manager/foot.nix
     ../../modules/home-manager/neovim.nix
+    ../../modules/home-manager/python.nix
   ];
 
   colorScheme = import ../../themes/monolith.nix;
