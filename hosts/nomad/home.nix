@@ -20,7 +20,6 @@
     ../../modules/home-manager/foot.nix
     ../../modules/home-manager/neovim.nix
     ../../modules/home-manager/python.nix
-    ../../modules/home-manager/geany.nix
   ];
 
   colorScheme = import ../../themes/nomad.nix;
