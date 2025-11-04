@@ -326,7 +326,7 @@ in
       buffer_font_size = 10;
       buffer_font_family = "FiraCode Nerd Font Mono";
 
-      language_overrides = {
+      languages = {
         Rust = {
           language_server = {
             external = true;
@@ -348,7 +348,7 @@ in
         Python = {
           language_server = {
             external = true;
-            command = "pylsp";
+            command = "basedpyright-langserver";
           };
           formatter = {
             external = {

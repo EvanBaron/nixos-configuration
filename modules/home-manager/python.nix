@@ -14,6 +14,7 @@
     # Basic development tools
     python3Packages.black
     python3Packages.pytest
+    basedpyright
 
     # Package management
     poetry
