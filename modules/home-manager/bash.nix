@@ -1,4 +1,3 @@
-# Bash shell configuration with Starship prompt
 {
   programs.bash = {
     enable = true;

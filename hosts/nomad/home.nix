@@ -7,29 +7,27 @@
 }:
 
 {
+  nixpkgs.config.allowUnfree = true;
+
   imports = [
     inputs.nix-colors.homeManagerModules.default
     inputs.zen-browser.homeModules.beta
     ../../modules/home-manager/git.nix
-    ../../modules/home-manager/rclone.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/cursor.nix
     ../../modules/home-manager/bash.nix
-    ../../modules/home-manager/sway/nomad.nix
+    ../../modules/home-manager/sway.nix
     ../../modules/home-manager/zen.nix
     ../../modules/home-manager/foot.nix
     ../../modules/home-manager/neovim.nix
     ../../modules/home-manager/python.nix
   ];
 
+  theme.wallpaper = ./wallpaper.png;
   colorScheme = import ../../themes/nomad.nix;
 
   home.username = user.username;
   home.homeDirectory = "/home/${user.username}";
-
-  home.stateVersion = "25.05";
-
-  nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
     nodejs

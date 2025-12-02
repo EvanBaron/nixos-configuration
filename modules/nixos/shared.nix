@@ -1,16 +1,10 @@
-# ============================================================================
-# SHARED NIXOS CONFIGURATION
-# ============================================================================
-
 {
   pkgs,
   inputs,
   ...
 }:
 {
-  # ========================================================================
-  # MODULE IMPORTS
-  # ========================================================================
+  nixpkgs.config.allowUnfree = true;
 
   imports = [
     inputs.home-manager.nixosModules.default
@@ -21,10 +15,6 @@
     ./rust.nix
     ./c.nix
   ];
-
-  # ========================================================================
-  # BOOT CONFIGURATION
-  # ========================================================================
 
   boot.loader = {
     efi = {
@@ -41,47 +31,28 @@
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  # ========================================================================
-  # NIX CONFIGURATION
-  # ========================================================================
-
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
 
+  # Automatic Nix garbage collection
   nix.gc = {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 14d";
   };
 
-  # ========================================================================
-  # NETWORKING CONFIGURATION
-  # ========================================================================
-
   networking.networkmanager.enable = true;
   networking.firewall.allowedTCPPorts = [ 8081 ];
 
-  # ========================================================================
-  # LOCALIZATION
-  # ========================================================================
-
   time.timeZone = "Europe/Paris";
-
-  # ========================================================================
-  # CORE SYSTEM SERVICES
-  # ========================================================================
 
   services = {
     openssh.enable = true;
     xserver.enable = false;
     gnome.gnome-keyring.enable = true;
   };
-
-  # ========================================================================
-  # WAYLAND SESSION CONFIGURATION
-  # ========================================================================
 
   environment.etc."wayland-sessions/sway.desktop".text = ''
     [Desktop Entry]
@@ -91,10 +62,6 @@
     Type=Application
     Keywords=tiling;wm;windowmanager;wayland;compositor;
   '';
-
-  # ========================================================================
-  # TYPOGRAPHY CONFIGURATION
-  # ========================================================================
 
   fonts = {
     packages = with pkgs; [
@@ -109,17 +76,9 @@
     };
   };
 
-  # ========================================================================
-  # HOME MANAGER CONFIGURATION
-  # ========================================================================
-
   home-manager = {
     extraSpecialArgs = { inherit inputs; };
   };
-
-  # ========================================================================
-  # SYSTEM PACKAGES
-  # ========================================================================
 
   environment.systemPackages = with pkgs; [
     wget
@@ -128,13 +87,12 @@
     wl-clipboard
     mako
     xdg-utils
-    neovim
     gemini-cli
   ];
 
-  # ========================================================================
-  # SYSTEM VERSION
-  # ========================================================================
+  home-manager.sharedModules = [
+    { home.stateVersion = "25.05"; }
+  ];
 
   system.stateVersion = "25.05";
 }
