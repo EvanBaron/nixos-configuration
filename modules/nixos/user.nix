@@ -17,6 +17,7 @@
   };
 
   config = {
+    users.groups.video.members = [ config.user.username ];
     users.users.${config.user.username} = {
       isNormalUser = true;
       extraGroups = [

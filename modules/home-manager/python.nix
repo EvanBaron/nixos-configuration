@@ -1,4 +1,3 @@
-# Minimal Python development environment configuration
 {
   pkgs,
   ...

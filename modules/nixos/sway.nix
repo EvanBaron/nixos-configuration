@@ -1,17 +1,8 @@
-# ============================================================================
-# SYSTEM-LEVEL SWAY CONFIGURATION
-# ============================================================================
-#
-
 {
   pkgs,
   ...
 }:
 {
-  # ========================================================================
-  # SWAY PROGRAM CONFIGURATION
-  # ========================================================================
-
   programs.sway = {
     enable = true;
     wrapperFeatures.gtk = true;
@@ -41,16 +32,8 @@
     ];
   };
 
-  # ========================================================================
-  # REQUIRED SYSTEM SERVICES
-  # ========================================================================
-
   security.polkit.enable = true;
   services.dbus.enable = true;
-
-  # ========================================================================
-  # XDG DESKTOP PORTAL CONFIGURATION
-  # ========================================================================
 
   xdg.portal = {
     enable = true;
@@ -60,10 +43,6 @@
     ];
   };
 
-  # ========================================================================
-  # WAYLAND SESSION DESKTOP ENTRY
-  # ========================================================================
-
   environment.etc."wayland-sessions/sway.desktop".text = ''
     [Desktop Entry]
     Name=Sway
@@ -72,10 +51,6 @@
     Type=Application
     Keywords=tiling;wm;windowmanager;wayland;compositor;
   '';
-
-  # ========================================================================
-  # SYSTEM-WIDE SWAY DEFAULTS
-  # ========================================================================
 
   environment.etc."sway/config".text = ''
     # Minimal system fallback configuration
