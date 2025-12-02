@@ -1,389 +1,289 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 
 {
-  programs.neovim = {
+  programs.nixvim = {
     enable = true;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
 
-    plugins = with pkgs.vimPlugins; [
-      # LSP support
-      nvim-lspconfig
+    extraPlugins = [ pkgs.vimPlugins.base16-nvim ];
+
+    extraConfigLua = ''
+      require('base16-colorscheme').setup({
+        base00 = '#${config.colorScheme.palette.base00}',
+        base01 = '#${config.colorScheme.palette.base01}',
+        base02 = '#${config.colorScheme.palette.base02}',
+        base03 = '#${config.colorScheme.palette.base03}',
+        base04 = '#${config.colorScheme.palette.base04}',
+        base05 = '#${config.colorScheme.palette.base05}',
+        base06 = '#${config.colorScheme.palette.base06}',
+        base07 = '#${config.colorScheme.palette.base07}',
+        base08 = '#${config.colorScheme.palette.base08}',
+        base09 = '#${config.colorScheme.palette.base09}',
+        base0A = '#${config.colorScheme.palette.base0A}',
+        base0B = '#${config.colorScheme.palette.base0B}',
+        base0C = '#${config.colorScheme.palette.base0C}',
+        base0D = '#${config.colorScheme.palette.base0D}',
+        base0E = '#${config.colorScheme.palette.base0E}',
+        base0F = '#${config.colorScheme.palette.base0F}'
+      })
+    '';
+
+    opts = {
+      # Line numbers
+      number = true;
+      relativenumber = true;
+
+      # Indentation
+      tabstop = 4;
+      shiftwidth = 4;
+      expandtab = true;
+      smartindent = true;
+      autoindent = true;
+
+      # Search
+      ignorecase = true;
+      smartcase = true;
+      hlsearch = true;
+      incsearch = true;
+
+      # Splits
+      splitright = true;
+      splitbelow = true;
+
+      # Performance & UI
+      updatetime = 300;
+      timeoutlen = 500;
+      termguicolors = true;
+      mouse = "a";
+
+      # Undo
+      undofile = true;
+    };
+
+    globals.mapleader = " ";
+
+    clipboard = {
+      register = "unnamedplus";
+      providers.wl-copy.enable = true; # Wayland clipboard
+    };
+
+    plugins = {
+      # File Explorer
+      nvim-tree = {
+        enable = true;
+        view.width = 30;
+        view.side = "left";
+      };
+
+      # Fuzzy Finder
+      telescope = {
+        enable = true;
+        extensions.fzf-native.enable = true;
+        # Keymaps can be defined directly here or in the global keymaps section
+        keymaps = {
+          "<leader>ff" = "find_files";
+          "<leader>fg" = "live_grep";
+          "<leader>fb" = "buffers";
+          "<leader>fh" = "help_tags";
+          "<leader>fr" = "oldfiles";
+        };
+        settings.defaults.file_ignore_patterns = [
+          "node_modules"
+          ".git"
+        ];
+      };
+
+      # Syntax Highlighting
+      treesitter = {
+        enable = true;
+        settings = {
+          highlight.enable = true;
+          indent.enable = true;
+        };
+      };
+
+      # Git Integration
+      gitsigns = {
+        enable = true;
+        settings.signs = {
+          add.text = "+";
+          change.text = "~";
+        };
+      };
+
+      # Status Line
+      lualine.enable = true;
+
+      # Auto Pairs & Comments
+      nvim-autopairs.enable = true;
+      comment.enable = true;
+
+      # Indent Guides
+      indent-blankline.enable = true;
+
+      # Key Help
+      which-key.enable = true;
+
+      # Terminal
+      toggleterm = {
+        enable = true;
+        settings = {
+          size = 20;
+          direction = "horizontal";
+          open_mapping = "[[<c-\\>]]";
+        };
+      };
+
+      # Language Server Protocol
+      lsp = {
+        enable = true;
+        servers = {
+          clangd.enable = true;
+          nil_ls.enable = true; # Nix
+          lua_ls.enable = true;
+          ts_ls.enable = true; # TypeScript
+          pylsp.enable = true; # Python
+          rust_analyzer = {
+            enable = true;
+            installCargo = true;
+            installRustc = true;
+          };
+        };
+        keymaps = {
+          silent = true;
+          lspBuf = {
+            gd = "definition";
+            gD = "declaration";
+            K = "hover";
+            gi = "implementation";
+            gr = "references";
+            "<space>rn" = "rename";
+            "<space>ca" = "code_action";
+            "<space>f" = "format";
+          };
+          diagnostic = {
+            "<space>e" = "open_float";
+            "[d" = "goto_prev";
+            "]d" = "goto_next";
+          };
+        };
+      };
 
       # Autocompletion
-      nvim-cmp
-      cmp-nvim-lsp
-      cmp-buffer
-      cmp-path
-      cmp-cmdline
+      cmp = {
+        enable = true;
+        autoEnableSources = true;
+        settings = {
+          snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
+          mapping = {
+            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+            "<C-Space>" = "cmp.mapping.complete()";
+            "<C-e>" = "cmp.mapping.abort()";
+            "<CR>" = "cmp.mapping.confirm({ select = true })";
+            "<Tab>" =
+              "cmp.mapping(function(fallback) if cmp.visible() then cmp.select_next_item() elseif require('luasnip').expand_or_jumpable() then require('luasnip').expand_or_jump() else fallback() end end, {'i', 's'})";
+            "<S-Tab>" =
+              "cmp.mapping(function(fallback) if cmp.visible() then cmp.select_prev_item() elseif require('luasnip').jumpable(-1) then require('luasnip').jump(-1) else fallback() end end, {'i', 's'})";
+          };
+          sources = [
+            { name = "nvim_lsp"; }
+            { name = "luasnip"; }
+            { name = "path"; }
+            { name = "buffer"; }
+          ];
+        };
+      };
 
       # Snippets
-      luasnip
-      cmp_luasnip
-      friendly-snippets # Pre-built snippets for various languages
+      luasnip.enable = true;
+      friendly-snippets.enable = true;
+    };
 
-      # File explorer
-      nvim-tree-lua
-      nvim-web-devicons # Icons for nvim-tree and other plugins
+    keymaps = [
+      # Clear search highlighting
+      {
+        mode = "n";
+        key = "<leader>/";
+        action = "<cmd>nohlsearch<CR>";
+        options.desc = "Clear search highlight";
+      }
+      # Save/Quit
+      {
+        mode = "n";
+        key = "<leader>w";
+        action = "<cmd>w<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>q";
+        action = "<cmd>q<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>x";
+        action = "<cmd>x<CR>";
+      }
 
-      # Fuzzy finder
-      telescope-nvim
-      telescope-fzf-native-nvim
+      # NvimTree
+      {
+        mode = "n";
+        key = "<leader>e";
+        action = ":NvimTreeToggle<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>n";
+        action = ":NvimTreeFocus<CR>";
+      }
 
-      # Syntax highlighting
-      nvim-treesitter.withAllGrammars
-      nvim-treesitter-textobjects
+      # Buffer Navigation
+      {
+        mode = "n";
+        key = "<leader>bn";
+        action = ":bnext<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>bp";
+        action = ":bprevious<CR>";
+      }
+      {
+        mode = "n";
+        key = "<leader>bd";
+        action = ":bdelete<CR>";
+      }
 
-      # Git integration
-      gitsigns-nvim
-
-      # Status line
-      lualine-nvim
-
-      # Auto pairs
-      nvim-autopairs
-
-      # Comment toggling
-      comment-nvim
-
-      # Indent guides
-      indent-blankline-nvim
-
-      # Which-key (shows keybind hints)
-      which-key-nvim
-
-      # Better terminal
-      toggleterm-nvim
+      # Window Navigation
+      {
+        mode = "n";
+        key = "<C-h>";
+        action = "<C-w>h";
+      }
+      {
+        mode = "n";
+        key = "<C-j>";
+        action = "<C-w>j";
+      }
+      {
+        mode = "n";
+        key = "<C-k>";
+        action = "<C-w>k";
+      }
+      {
+        mode = "n";
+        key = "<C-l>";
+        action = "<C-w>l";
+      }
     ];
 
     extraPackages = with pkgs; [
-      # Language servers
-      clang-tools # clangd
-      nil # Nix LSP
-      lua-language-server
-      nodePackages.typescript-language-server
-      python3Packages.python-lsp-server
-      rust-analyzer
-
-      # Formatters
       nixpkgs-fmt
-      black # Python formatter
-      rustfmt
-
-      # Other tools
-      ripgrep # Better grep for telescope
-      fd # Better find for telescope
-      tree-sitter # For treesitter
+      black
+      ripgrep
+      fd
     ];
-
-    extraConfig = ''
-      " Set leader key
-      let mapleader = " "
-
-      " Appearance
-      set termguicolors
-
-      " Line numbers
-      set number
-      set relativenumber
-
-      " Indentation
-      set tabstop=4
-      set shiftwidth=4
-      set expandtab
-      set smartindent
-      set autoindent
-
-      " Search
-      set ignorecase
-      set smartcase
-      set hlsearch
-      set incsearch
-
-      " Splits
-      set splitright
-      set splitbelow
-
-      " Performance
-      set updatetime=300
-      set timeoutlen=500
-
-      " Enable mouse support
-      set mouse=a
-
-      " Better backspace
-      set backspace=indent,eol,start
-
-      " Clipboard integration
-      set clipboard+=unnamedplus
-
-      " Undo settings
-      set undofile
-      set undodir=~/.config/nvim/undo
-
-      " LSP configuration
-      lua << EOF
-      local lspconfig = require('lspconfig')
-
-      -- Setup language servers
-      local servers = {
-        'clangd',
-        'nil_ls',         -- Nix
-        'lua_ls',         -- Lua
-        'ts_ls',          -- TypeScript/JavaScript
-        'pylsp',          -- Python
-        'rust_analyzer'   -- Rust
-      }
-
-      -- Common on_attach function for all LSP servers
-      local on_attach = function(client, bufnr)
-        vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
-
-        local opts = { buffer = bufnr, noremap = true, silent = true }
-        vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-        vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-        vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-        vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-        vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-        vim.keymap.set('n', '<space>wl', function()
-          print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-        end, opts)
-        vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, opts)
-        vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
-        vim.keymap.set({ 'n', 'v' }, '<space>ca', vim.lsp.buf.code_action, opts)
-        vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-        vim.keymap.set('n', '<space>f', function()
-          vim.lsp.buf.format { async = true }
-        end, opts)
-      end
-
-      -- Setup each server
-      for _, server in ipairs(servers) do
-        local config = {
-          on_attach = on_attach,
-          capabilities = require('cmp_nvim_lsp').default_capabilities()
-        }
-
-        -- Special config for lua_ls
-        if server == 'lua_ls' then
-          config.settings = {
-            Lua = {
-              runtime = { version = 'LuaJIT' },
-              diagnostics = { globals = {'vim'} },
-              workspace = {
-                library = vim.api.nvim_get_runtime_file("", true),
-                checkThirdParty = false,
-              },
-              telemetry = { enable = false },
-            }
-          }
-        end
-
-        lspconfig[server].setup(config)
-      end
-
-      -- Global mappings for diagnostics
-      vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
-      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
-      vim.keymap.set('n', ']d', vim.diagnostic.goto_next)
-      vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist)
-
-      -- Treesitter configuration
-      require('nvim-treesitter.configs').setup({
-        highlight = { enable = true },
-        indent = { enable = true },
-        textobjects = {
-          select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-              ["af"] = "@function.outer",
-              ["if"] = "@function.inner",
-              ["ac"] = "@class.outer",
-              ["ic"] = "@class.inner",
-            },
-          },
-        },
-      })
-
-      -- Completion configuration
-      local cmp = require('cmp')
-      local luasnip = require('luasnip')
-
-      -- Load friendly-snippets
-      require("luasnip.loaders.from_vscode").lazy_load()
-
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            luasnip.lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.abort(),
-          ['<CR>'] = cmp.mapping.confirm({ select = true }),
-          ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-              luasnip.expand_or_jump()
-            else
-              fallback()
-            end
-          end, { 'i', 's' }),
-          ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-              luasnip.jump(-1)
-            else
-              fallback()
-            end
-          end, { 'i', 's' }),
-        }),
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-        }, {
-          { name = 'buffer' },
-          { name = 'path' },
-        })
-      })
-
-      -- Command line completion
-      cmp.setup.cmdline({ '/', '?' }, {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = {
-          { name = 'buffer' }
-        }
-      })
-
-      cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources({
-          { name = 'path' }
-        }, {
-          { name = 'cmdline' }
-        })
-      })
-
-      -- Telescope configuration
-      require('telescope').setup({
-        defaults = {
-          file_ignore_patterns = { "node_modules", ".git" },
-        },
-        extensions = {
-          fzf = {
-            fuzzy = true,
-            override_generic_sorter = true,
-            override_file_sorter = true,
-            case_mode = "smart_case",
-          }
-        }
-      })
-      require('telescope').load_extension('fzf')
-
-      -- GitSigns configuration
-      require('gitsigns').setup({
-        signs = {
-          add = { text = '+' },
-          change = { text = '~' },
-          delete = { text = '_' },
-          topdelete = { text = '‾' },
-          changedelete = { text = '~' },
-        }
-      })
-
-      -- Lualine configuration
-      require('lualine').setup({
-        options = {
-          theme = 'auto',
-          component_separators = '|',
-          section_separators = "",
-        }
-      })
-
-      -- NvimTree configuration
-      require("nvim-tree").setup({
-        view = {
-          width = 30,
-          side = 'left',
-        },
-        renderer = {
-          group_empty = true,
-        },
-        filters = {
-          dotfiles = false,
-        },
-      })
-
-      -- Autopairs configuration
-      require('nvim-autopairs').setup({})
-
-      -- Comment configuration
-      require('Comment').setup()
-
-      -- Indent blankline configuration
-      require('ibl').setup({
-        indent = { char = "│" },
-        scope = { enabled = false },
-      })
-
-      -- Which-key configuration
-      require('which-key').setup()
-
-      -- ToggleTerm configuration
-      require('toggleterm').setup({
-        size = 20,
-        open_mapping = [[<c-\>]],
-        hide_numbers = true,
-        shade_terminals = true,
-        direction = 'horizontal',
-      })
-      EOF
-
-      " Key mappings
-      " File operations
-      nnoremap <leader>ff <cmd>Telescope find_files<cr>
-      nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-      nnoremap <leader>fb <cmd>Telescope buffers<cr>
-      nnoremap <leader>fh <cmd>Telescope help_tags<cr>
-      nnoremap <leader>fr <cmd>Telescope oldfiles<cr>
-
-      " NvimTree keymaps
-      nnoremap <leader>e :NvimTreeToggle<CR>
-      nnoremap <leader>n :NvimTreeFocus<CR>
-
-      " Buffer navigation
-      nnoremap <leader>bn :bnext<CR>
-      nnoremap <leader>bp :bprevious<CR>
-      nnoremap <leader>bd :bdelete<CR>
-
-      " Window navigation
-      nnoremap <C-h> <C-w>h
-      nnoremap <C-j> <C-w>j
-      nnoremap <C-k> <C-w>k
-      nnoremap <C-l> <C-w>l
-
-      " Clear search highlighting
-      nnoremap <leader>/ :nohlsearch<CR>
-
-      " Save and quit shortcuts
-      nnoremap <leader>w :w<CR>
-      nnoremap <leader>q :q<CR>
-      nnoremap <leader>x :x<CR>
-
-      " Git shortcuts (GitSigns)
-      nnoremap <leader>gp :Gitsigns preview_hunk<CR>
-      nnoremap <leader>gt :Gitsigns toggle_current_line_blame<CR>
-      nnoremap <leader>gn :Gitsigns next_hunk<CR>
-      nnoremap <leader>gN :Gitsigns prev_hunk<CR>
-    '';
   };
 }

@@ -12,6 +12,7 @@
   imports = [
     inputs.nix-colors.homeManagerModules.default
     inputs.zen-browser.homeModules.beta
+    inputs.nixvim.homeManagerModules.nixvim
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/cursor.nix
