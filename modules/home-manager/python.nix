@@ -24,7 +24,6 @@
   home.file.".config/pip/pip.conf".text = ''
     [global]
     user = true
-    break-system-packages = true
 
     [install]
     user = true
