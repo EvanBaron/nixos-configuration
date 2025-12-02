@@ -7,6 +7,7 @@
 }:
 
 let
+  stdenv = pkgs.stdenv;
   # Generate a Zed theme from the nix-colors scheme
   zedTheme = pkgs.writeText "zed-theme.json" (
     builtins.toJSON {
@@ -88,7 +89,7 @@ let
             terminal.ansi.bright_cyan = "#${config.colorScheme.palette.base0C}";
             terminal.ansi.dim_cyan = null;
             terminal.ansi.white = "#${config.colorScheme.palette.base05}";
-            terminal.ansi.bright_white = "#${config.colorScheme.palette.base07}";
+            terminal.ansi.bright_white = "#${config.colorScheme.palette.base05}";
             terminal.ansi.dim_white = null;
             link_text.hover = "#${config.colorScheme.palette.base0C}";
             conflict = "#${config.colorScheme.palette.base0A}";
@@ -99,7 +100,7 @@ let
             hint = "#${config.colorScheme.palette.base05}";
             ignored = "#${config.colorScheme.palette.base03}";
             info = "#${config.colorScheme.palette.base0C}";
-            modified = "#${config.colorScheme.palette.base0D}";
+            modified = "#${config.colorScheme.palette.base06}";
             predictive = "#${config.colorScheme.palette.base03}";
             renamed = "#${config.colorScheme.palette.base0A}";
             success = "#${config.colorScheme.palette.base0B}";
@@ -121,7 +122,7 @@ let
                 font_weight = null;
               };
               boolean = {
-                color = "#${config.colorScheme.palette.base0A}";
+                color = "#${config.colorScheme.palette.base09}";
                 font_style = null;
                 font_weight = null;
               };
@@ -136,12 +137,12 @@ let
                 font_weight = null;
               };
               constant = {
-                color = "#${config.colorScheme.palette.base0A}";
+                color = "#${config.colorScheme.palette.base09}";
                 font_style = null;
                 font_weight = null;
               };
               constructor = {
-                color = "#${config.colorScheme.palette.base08}";
+                color = "#${config.colorScheme.palette.base0D}";
                 font_style = null;
                 font_weight = null;
               };
@@ -186,22 +187,22 @@ let
                 font_weight = null;
               };
               operator = {
-                color = "#${config.colorScheme.palette.base03}";
+                color = "#${config.colorScheme.palette.base05}";
                 font_style = null;
                 font_weight = null;
               };
               punctuation = {
-                color = "#${config.colorScheme.palette.base03}";
+                color = "#${config.colorScheme.palette.base05}";
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.bracket" = {
-                color = "#${config.colorScheme.palette.base03}";
+                color = "#${config.colorScheme.palette.base04}";
                 font_style = null;
                 font_weight = null;
               };
               "punctuation.delimiter" = {
-                color = null;
+                color = "#${config.colorScheme.palette.base05}";
                 font_style = null;
                 font_weight = null;
               };
@@ -221,12 +222,12 @@ let
                 font_weight = null;
               };
               "string.escape" = {
-                color = "#${config.colorScheme.palette.base09}";
+                color = "#${config.colorScheme.palette.base0C}";
                 font_style = null;
                 font_weight = null;
               };
               "string.regex" = {
-                color = "#${config.colorScheme.palette.base0B}";
+                color = "#${config.colorScheme.palette.base0C}";
                 font_style = null;
                 font_weight = null;
               };
@@ -261,7 +262,7 @@ let
                 font_weight = null;
               };
               variable = {
-                color = null;
+                color = "#${config.colorScheme.palette.base05}";
                 font_style = null;
                 font_weight = null;
               };
@@ -270,12 +271,27 @@ let
                 font_style = "italic";
                 font_weight = null;
               };
+              property = {
+                color = "#${config.colorScheme.palette.base05}";
+                font_style = null;
+                font_weight = null;
+              };
             };
           };
         }
       ];
     }
   );
+
+  # Arguments to pass to clangd
+  clang_args = builtins.concatStringsSep " " [
+    (builtins.readFile "${stdenv.cc}/nix-support/libc-crt1-cflags")
+    (builtins.readFile "${stdenv.cc}/nix-support/libc-cflags")
+    (builtins.readFile "${stdenv.cc}/nix-support/cc-cflags")
+    (builtins.readFile "${stdenv.cc}/nix-support/libcxx-cxxflags")
+    (lib.optionalString stdenv.cc.isClang "-idirafter ${stdenv.cc.cc.lib}/lib/clang/${lib.getVersion stdenv.cc.cc}/include")
+    (lib.optionalString stdenv.cc.isGNU "-isystem ${lib.getDev stdenv.cc.cc}/include/c++/${lib.getVersion stdenv.cc.cc} -isystem ${stdenv.cc.cc}/include/c++/${lib.getVersion stdenv.cc.cc}/${stdenv.hostPlatform.config} -idirafter ${stdenv.cc.cc}/lib/gcc/${stdenv.hostPlatform.config}/${lib.getVersion stdenv.cc.cc}/include")
+  ];
 in
 
 {
@@ -337,12 +353,14 @@ in
           language_server = {
             external = true;
             command = "clangd";
+            arguments = [ clang_args ];
           };
         };
         "C++" = {
           language_server = {
             external = true;
             command = "clangd";
+            arguments = [ clang_args ];
           };
         };
         Python = {

@@ -53,10 +53,10 @@
       #urlbar, #searchbar {
         background-color: var(--ui-bg) !important;
         color: var(--ui-fg) !important;
-        border: 1px solid var(--ui-bg) !important;
+        border: 1px solid var(--sel-bg) !important;
       }
       #urlbar[focused="true"], #searchbar[focused="true"] {
-        border: 1px solid var(--sel-bg) !-important;
+        border: 1px solid var(--sel-bg) !important;
       }
 
       /* Sidebar */
@@ -102,6 +102,16 @@
       }
       .findbar-textbox:focus {
         border-color: var(--sel-bg) !important;
+      }
+
+      #sidebar-box,
+      .sidebar-splitter,
+      #appcontent,
+      #tabbrowser-tabbox,
+      browser[type="content-primary"],
+      browser[type="content"] > html {
+        border: none !important;
+        box-shadow: none !important;
       }
     '';
   };
