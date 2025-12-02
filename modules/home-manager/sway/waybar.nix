@@ -13,7 +13,7 @@
 
       #waybar {
         background-color: #${config.colorScheme.palette.base00};
-        color: #${config.colorScheme.palette.base05};
+        color: #${config.colorScheme.palette.base03};
       }
 
       #workspaces button {
