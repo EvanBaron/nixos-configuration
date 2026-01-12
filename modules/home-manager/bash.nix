@@ -6,6 +6,12 @@
     '';
   };
 
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    enableBashIntegration = true;
+  };
+
   programs.starship = {
     enable = true;
     enableBashIntegration = true;

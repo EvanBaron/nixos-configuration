@@ -103,16 +103,6 @@
       .findbar-textbox:focus {
         border-color: var(--sel-bg) !important;
       }
-
-      #sidebar-box,
-      .sidebar-splitter,
-      #appcontent,
-      #tabbrowser-tabbox,
-      browser[type="content-primary"],
-      browser[type="content"] > html {
-        border: none !important;
-        box-shadow: none !important;
-      }
     '';
   };
 }

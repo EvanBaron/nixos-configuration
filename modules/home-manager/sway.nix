@@ -65,7 +65,7 @@ in
           };
         };
 
-        # Disable default bars (handled by Waybar)
+        # Disable default bars
         bars = [ ];
 
         input = lib.mkIf isLaptop {
