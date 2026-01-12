@@ -16,7 +16,7 @@
     base09 = "#FE8019"; # Integers, Boolean, Constants, XML Attributes
     base0A = "#FABD2F"; # Classes, Markup Bold, Search Text Background
     base0B = "#A19D17"; # Strings, Inherited Class, Markup Code, Git Diff (Inserted)
-    base0C = "#009A9B"; # Support, Regular Expressions, Escape Characters
+    base0C = "#02A7A8"; # Support, Regular Expressions, Escape Characters
     base0D = "#458588"; # Functions, Methods, Attribute IDs, Headings
     base0E = "#B16286"; # Keywords, Storage, Selector, Markup Link URL
     base0F = "#7C6F64"; # Deprecated, Opening/Closing Embedded Language Tags
