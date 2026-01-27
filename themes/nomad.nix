@@ -2,6 +2,7 @@
   # Nomad Teal theme
 
   name = "Nomad Teal";
+  slug = "nomad-teal";
 
   palette = {
     base00 = "#1D2021"; # The main background color of the window
