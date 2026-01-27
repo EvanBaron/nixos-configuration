@@ -14,6 +14,7 @@
     ./android.nix
     ./rust.nix
     ./c.nix
+    ./thunar.nix
   ];
 
   boot.loader = {
