@@ -31,6 +31,12 @@ in
     executable = false;
   };
 
+  home.packages = with pkgs; [
+    texlab
+    zathura
+    texlive.combined.scheme-full
+  ];
+
   programs.zed-editor = {
     enable = true;
     extensions = [
@@ -43,6 +49,7 @@ in
       "c"
       "cpp"
       "python"
+      "latex"
     ];
 
     userSettings = {
@@ -96,6 +103,41 @@ in
             external = {
               command = "black";
               arguments = [ "-" ];
+            };
+          };
+        };
+        LaTeX = {
+          language_servers = [ "texlab" ];
+          format_on_save = "on";
+        };
+      };
+
+      lsp = {
+        texlab = {
+          binary = {
+            path_lookup = true;
+          };
+          settings = {
+            texlab = {
+              build = {
+                onSave = true;
+                executable = "latexmk";
+                args = [
+                  "-pdf"
+                  "-interaction=nonstopmode"
+                  "-synctex=1"
+                  "%f"
+                ];
+                forwardSearchAfter = false;
+              };
+              forwardSearch = {
+                executable = "zathura";
+                args = [
+                  "--synctex-forward"
+                  "%l:1:%f"
+                  "%p"
+                ];
+              };
             };
           };
         };
