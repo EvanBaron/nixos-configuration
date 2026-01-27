@@ -280,17 +280,19 @@ in
     # Kanshi for laptop only
     services.kanshi = lib.mkIf isLaptop {
       enable = true;
-      profiles = {
-        "laptop-only" = {
-          outputs = [
+      settings = [
+        {
+          profile.name = "laptop-only";
+          profile.outputs = [
             {
               criteria = "eDP-1";
               status = "enable";
             }
           ];
-        };
-        "external-display" = {
-          outputs = [
+        }
+        {
+          profile.name = "external-display";
+          profile.outputs = [
             {
               criteria = "eDP-1";
               status = "disable";
@@ -300,8 +302,8 @@ in
               status = "enable";
             }
           ];
-        };
-      };
+        }
+      ];
     };
   };
 }
