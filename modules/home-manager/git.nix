@@ -17,10 +17,12 @@
     enable = true;
     lfs.enable = true;
 
-    userName = config.home.username;
-    userEmail = user.email;
+    settings = {
+      user = {
+        name = config.home.username;
+        email = user.email;
+      };
 
-    extraConfig = {
       core = {
         editor = "nvim";
         autocrlf = "input";
@@ -34,7 +36,12 @@
 
   programs.ssh = {
     enable = true;
+    enableDefaultConfig = false;
+
     matchBlocks = {
+      "*" = {
+        addKeysToAgent = "yes";
+      };
       # EPITA
       "ssh.cri.epita.fr" = {
         hostname = "ssh.cri.epita.fr";

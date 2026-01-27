@@ -70,11 +70,16 @@
     };
 
     plugins = {
+      # Icons
+      web-devicons.enable = true;
+
       # File Explorer
       nvim-tree = {
         enable = true;
-        view.width = 30;
-        view.side = "left";
+        settings.view = {
+          width = 30;
+          side = "left";
+        };
       };
 
       # Fuzzy Finder
