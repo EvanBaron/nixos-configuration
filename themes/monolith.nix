@@ -2,6 +2,7 @@
   # Monolith Olive theme
 
   name = "Monolith Olive";
+  slug = "monolith-olive";
 
   palette = {
     base00 = "#1D2021"; # The main background color of the window
