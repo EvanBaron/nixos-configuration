@@ -19,7 +19,7 @@
       mako
 
       # Terminal and launcher
-      foot
+      kitty
       wmenu
 
       # Screenshot tools
@@ -60,7 +60,7 @@
     set $mod Mod4
 
     # Basic terminal binding as fallback
-    bindsym $mod+Return exec ${pkgs.foot}/bin/foot
+    bindsym $mod+Return exec ${pkgs.kitty}/bin/kitty
 
     # Exit binding
     bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit sway?' -b 'Yes' 'swaymsg exit'
