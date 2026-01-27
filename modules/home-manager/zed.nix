@@ -62,10 +62,11 @@ in
 
       terminal = {
         env = {
-          TERM = "foot";
+          TERM = "xterm-kitty";
         };
 
-        font_family = "Fira Mono";
+        font_family = "FiraCode Nerd Font Mono";
+        font_size = 10;
       };
 
       vim_mode = false;
