@@ -17,11 +17,12 @@
     inputs.nixcord.homeModules.nixcord
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zed.nix
-    ../../modules/home-manager/cursor.nix
+    ../../modules/home-manager/gtk.nix
     ../../modules/home-manager/bash.nix
-    ../../modules/home-manager/sway.nix
+    ../../modules/home-manager/desktop/sway.nix
+    ../../modules/home-manager/desktop/wofi.nix
     ../../modules/home-manager/zen.nix
-    ../../modules/home-manager/foot.nix
+    ../../modules/home-manager/kitty.nix
     ../../modules/home-manager/neovim.nix
     ../../modules/home-manager/python.nix
     ../../modules/home-manager/spotify.nix
