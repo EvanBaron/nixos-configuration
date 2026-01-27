@@ -12,9 +12,9 @@
   imports = [
     inputs.nix-colors.homeManagerModules.default
     inputs.zen-browser.homeModules.beta
-    inputs.nixvim.homeManagerModules.nixvim
+    inputs.nixvim.homeModules.nixvim
     inputs.spicetify-nix.homeManagerModules.default
-    inputs.nixcord.homeManagerModules.nixcord
+    inputs.nixcord.homeModules.nixcord
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/cursor.nix
@@ -25,7 +25,6 @@
     ../../modules/home-manager/neovim.nix
     ../../modules/home-manager/python.nix
     ../../modules/home-manager/spotify.nix
-    ../../modules/home-manager/gemini.nix
     ../../modules/home-manager/discord.nix
   ];
 
@@ -41,7 +40,6 @@
     nixd
     nil
     docker-compose
-    figma-linux
   ];
 
   home.sessionVariables = {

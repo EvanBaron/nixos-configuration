@@ -23,6 +23,7 @@
   programs.light.enable = true;
 
   home-manager = {
+    backupFileExtension = "backup";
     extraSpecialArgs = {
       inherit inputs;
       user = config.user;

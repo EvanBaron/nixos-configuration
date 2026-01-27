@@ -14,6 +14,7 @@
   networking.hostName = "monolith";
 
   home-manager = {
+    backupFileExtension = "backup";
     extraSpecialArgs = {
       inherit inputs;
       user = config.user;
