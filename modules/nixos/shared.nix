@@ -9,6 +9,8 @@
   imports = [
     inputs.home-manager.nixosModules.default
     ./user.nix
+    ./grub.nix
+    ./sddm.nix
     ./sway.nix
     ./docker.nix
     ./android.nix
@@ -16,19 +18,6 @@
     ./c.nix
     ./thunar.nix
   ];
-
-  boot.loader = {
-    efi = {
-      canTouchEfiVariables = true;
-    };
-    grub = {
-      enable = true;
-      efiSupport = true;
-      device = "nodev";
-      useOSProber = true;
-      configurationLimit = 10;
-    };
-  };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -86,7 +75,6 @@
     grim
     slurp
     wl-clipboard
-    mako
     xdg-utils
     gemini-cli
   ];

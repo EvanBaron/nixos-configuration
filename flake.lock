@@ -69,6 +69,26 @@
         "type": "github"
       }
     },
+    "grub2-themes": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1757136219,
+        "narHash": "sha256-tKU+vq34KHu/A2wD7WdgP5A4/RCmSD8hB0TyQAUlixA=",
+        "owner": "vinceliuice",
+        "repo": "grub2-themes",
+        "rev": "80dd04ddf3ba7b284a7b1a5df2b1e95ee2aad606",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vinceliuice",
+        "repo": "grub2-themes",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -221,13 +241,35 @@
     },
     "root": {
       "inputs": {
+        "grub2-themes": "grub2-themes",
         "home-manager": "home-manager",
         "nix-colors": "nix-colors",
         "nixcord": "nixcord",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
+        "silentSDDM": "silentSDDM",
         "spicetify-nix": "spicetify-nix",
         "zen-browser": "zen-browser"
+      }
+    },
+    "silentSDDM": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769135640,
+        "narHash": "sha256-0pbRO9KT7oomDv4+TzHnKLmwb+FR6Hi/5G3lkK/5Q0g=",
+        "owner": "uiriansan",
+        "repo": "SilentSDDM",
+        "rev": "bb2c8a7c9f7f22a01f12940684220add0fb3fbcf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "uiriansan",
+        "repo": "SilentSDDM",
+        "type": "github"
       }
     },
     "spicetify-nix": {
