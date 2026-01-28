@@ -15,6 +15,7 @@ in
   # Import Waybar for both hosts
   imports = [
     ./waybar.nix
+    ./swaylock.nix
   ];
 
   options.theme.wallpaper = lib.mkOption {
@@ -128,6 +129,7 @@ in
             "${modifier}+Shift+q" = "kill";
             "${modifier}+f" = "fullscreen";
             "${modifier}+Shift+c" = "reload";
+            "${modifier}+l" = "exec ${pkgs.swaylock-effects}/bin/swaylock -fF";
             "${modifier}+Shift+e" =
               "exec swaynag -t warning -m 'Do you really want to exit sway?' -b 'Yes, exit sway' 'swaymsg exit'";
 
@@ -251,15 +253,17 @@ in
 
       + lib.optionalString isLaptop ''
         # Auto-lock on lid close
-        bindswitch --reload --locked lid:on exec ${pkgs.swaylock}/bin/swaylock -fF
+        # Updated to use swaylock-effects
+        bindswitch --reload --locked lid:on exec ${pkgs.swaylock-effects}/bin/swaylock -fF
 
         # Idle configuration for laptop
+        # Updated to use swaylock-effects
         exec ${pkgs.swayidle}/bin/swayidle -w \
-            timeout 300 '${pkgs.swaylock}/bin/swaylock -fF' \
+            timeout 300 '${pkgs.swaylock-effects}/bin/swaylock -fF' \
             timeout 600 'swaymsg "output * dpms off"' \
             resume 'swaymsg "output * dpms on"' \
             timeout 900 'systemctl suspend' \
-            before-sleep '${pkgs.swaylock}/bin/swaylock -fF'
+            before-sleep '${pkgs.swaylock-effects}/bin/swaylock -fF'
 
         # Laptop tray apps
         exec ${pkgs.networkmanagerapplet}/bin/nm-applet --indicator
