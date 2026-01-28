@@ -13,14 +13,7 @@
       swaylock
       swayidle
       wl-clipboard
-
-      # Background and notifications
       swaybg
-      mako
-
-      # Terminal and launcher
-      kitty
-      wmenu
 
       # Screenshot tools
       grim
