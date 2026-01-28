@@ -16,6 +16,7 @@ in
   imports = [
     ./waybar.nix
     ./swaylock.nix
+    ./swaync.nix
   ];
 
   options.theme.wallpaper = lib.mkOption {
@@ -132,6 +133,7 @@ in
             "${modifier}+l" = "exec ${pkgs.swaylock-effects}/bin/swaylock -fF";
             "${modifier}+Shift+e" =
               "exec swaynag -t warning -m 'Do you really want to exit sway?' -b 'Yes, exit sway' 'swaymsg exit'";
+            "${modifier}+Shift+n" = "exec swaync-client -t -sw";
 
             # Focus & Movement
             "${modifier}+Left" = "focus left";
