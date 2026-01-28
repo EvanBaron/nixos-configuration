@@ -74,7 +74,6 @@
       thumb {
         -moz-appearance: none !important;
         background-color: var(--ui-bg) !important;
-        border-radius: 5px !important;
       }
       thumb:hover {
         background-color: var(--sel-bg) !important;

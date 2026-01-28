@@ -10,14 +10,14 @@ in
 {
   programs.spicetify = {
     enable = true;
-    theme = spicePkgs.themes.text;
+    theme = spicePkgs.themes.sleek;
     colorScheme = "custom";
 
     customColorScheme = {
       text = config.colorScheme.palette.base05;
       subtext = config.colorScheme.palette.base04;
       sidebar-text = config.colorScheme.palette.base05;
-      main = config.colorScheme.palette.base00;
+      main = config.colorScheme.palette.base06;
       sidebar = config.colorScheme.palette.base00;
       player = config.colorScheme.palette.base01;
       card = config.colorScheme.palette.base00;
