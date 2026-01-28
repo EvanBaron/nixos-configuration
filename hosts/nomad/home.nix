@@ -27,6 +27,7 @@
     ../../modules/home-manager/python.nix
     ../../modules/home-manager/spotify.nix
     ../../modules/home-manager/discord.nix
+    ../../modules/home-manager/blender.nix
   ];
 
   theme.wallpaper = ./wallpaper.png;
