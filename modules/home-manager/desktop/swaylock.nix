@@ -19,7 +19,7 @@
       font = "Fira Code Nerd Font";
 
       # Colors
-      ring-color = "${config.colorScheme.palette.base0D}";
+      ring-color = "${config.colorScheme.palette.base05}";
       key-hl-color = "${config.colorScheme.palette.base0B}";
       line-color = "00000000";
       inside-color = "00000088";

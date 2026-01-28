@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, ... }:
 
 {
   programs.wofi = {
@@ -24,9 +24,8 @@
     style = ''
       window {
         margin: 0px;
-        border: 2px solid #${config.colorScheme.palette.base0D};
+        border: 2px solid #${config.colorScheme.palette.base06};
         background-color: #${config.colorScheme.palette.base00};
-        border-radius: 10px;
         font-family: "Fira Code Nerd Font";
         font-size: 14px;
       }
@@ -36,7 +35,6 @@
         border: none;
         color: #${config.colorScheme.palette.base05};
         background-color: #${config.colorScheme.palette.base02};
-        border-radius: 5px;
       }
 
       #inner-box {
@@ -64,7 +62,6 @@
 
       #entry:selected {
         background-color: #${config.colorScheme.palette.base02};
-        border-radius: 5px;
       }
     '';
   };
