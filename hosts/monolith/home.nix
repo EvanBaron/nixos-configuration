@@ -28,6 +28,7 @@
     ../../modules/home-manager/spotify.nix
     ../../modules/home-manager/discord.nix
     ../../modules/home-manager/blender.nix
+    ../../modules/home-manager/obsidian.nix
   ];
 
   theme.wallpaper = ./wallpaper.png;
