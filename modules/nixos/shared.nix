@@ -76,7 +76,6 @@
     slurp
     wl-clipboard
     xdg-utils
-    gemini-cli
   ];
 
   home-manager.sharedModules = [
