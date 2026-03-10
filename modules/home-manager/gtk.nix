@@ -6,7 +6,16 @@
 }:
 
 let
-  inherit (inputs.nix-colors.lib-contrib { inherit pkgs; }) gtkThemeFromScheme;
+  inherit
+    (inputs.nix-colors.lib-contrib {
+      pkgs = pkgs // {
+        nodePackages = pkgs.nodePackages // {
+          sass = pkgs.dart-sass;
+        };
+      };
+    })
+    gtkThemeFromScheme
+    ;
 in
 {
   home.pointerCursor = {

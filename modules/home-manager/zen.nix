@@ -13,7 +13,7 @@
     };
   };
 
-  home.file.".zen/default/chrome/userChrome.css" = {
+  home.file.".config/zen/default/chrome/userChrome.css" = {
     text = ''
       :root {
         --bg: #${config.colorScheme.palette.base00};
