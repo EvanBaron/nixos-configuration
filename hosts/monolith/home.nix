@@ -14,7 +14,6 @@
     inputs.zen-browser.homeModules.beta
     inputs.nixvim.homeModules.nixvim
     inputs.spicetify-nix.homeManagerModules.default
-    inputs.nixcord.homeModules.nixcord
     ../../modules/home-manager/git.nix
     ../../modules/home-manager/zed.nix
     ../../modules/home-manager/gtk.nix

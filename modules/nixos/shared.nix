@@ -34,7 +34,10 @@
   };
 
   networking.networkmanager.enable = true;
-  networking.firewall.allowedTCPPorts = [ 8081 ];
+  networking.firewall.allowedTCPPorts = [
+    8081
+    54321
+  ];
 
   time.timeZone = "Europe/Paris";
 
