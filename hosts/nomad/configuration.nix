@@ -15,11 +15,8 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
-  services.tlp.enable = true;
+  services.power-profiles-daemon.enable = true;
   powerManagement.powertop.enable = true;
-  powerManagement.cpuFreqGovernor = "powersave";
-
-  programs.light.enable = true;
 
   home-manager = {
     backupFileExtension = "backup";

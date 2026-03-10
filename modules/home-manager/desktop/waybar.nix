@@ -19,6 +19,7 @@
           "pulseaudio"
           "memory"
           "battery"
+          "power-profiles-daemon"
           "tray"
           "custom/notification"
           "clock#time"
@@ -53,6 +54,18 @@
           states = {
             warning = 30;
             critical = 10;
+          };
+        };
+
+        power-profiles-daemon = {
+          format = "{icon}";
+          tooltip-format = "Power profile: {profile}\nDriver: {driver}";
+          tooltip = true;
+          format-icons = {
+            default = "";
+            performance = "";
+            balanced = "";
+            power-saver = "";
           };
         };
 
@@ -145,6 +158,7 @@
       #memory,
       #pulseaudio,
       #tray,
+      #power-profiles-daemon,
       #custom-notification {
         padding: 0 8px;
         color: #${config.colorScheme.palette.base05};
