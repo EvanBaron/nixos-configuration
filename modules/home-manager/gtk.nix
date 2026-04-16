@@ -9,7 +9,7 @@ let
   inherit
     (inputs.nix-colors.lib-contrib {
       pkgs = pkgs // {
-        nodePackages = pkgs.nodePackages // {
+        nodePackages = {
           sass = pkgs.dart-sass;
         };
       };
@@ -39,6 +39,8 @@ in
       name = "${config.colorScheme.slug}";
       package = gtkThemeFromScheme { scheme = config.colorScheme; };
     };
+
+    gtk4.theme = config.gtk.theme;
 
     iconTheme = {
       name = "Reversal-grey-dark";

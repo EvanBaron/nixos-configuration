@@ -277,11 +277,7 @@ in
       with pkgs;
       [
         # Common
-        pavucontrol
-        pulseaudio
-        alsa-utils
         libnotify
-        playerctl
         waybar
       ]
       ++ lib.optionals isLaptop [

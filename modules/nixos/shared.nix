@@ -17,6 +17,7 @@
     ./rust.nix
     ./c.nix
     ./thunar.nix
+    ./audio.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
