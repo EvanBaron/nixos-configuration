@@ -28,6 +28,7 @@
     ../../modules/home-manager/discord.nix
     ../../modules/home-manager/blender.nix
     ../../modules/home-manager/obsidian.nix
+    ../../modules/home-manager/audio.nix
   ];
 
   theme.wallpaper = ./wallpaper.png;
@@ -43,7 +44,6 @@
     nil
     docker-compose
     gemini-cli
-    claude-code
   ];
 
   home.sessionVariables = {
