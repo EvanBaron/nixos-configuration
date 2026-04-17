@@ -207,11 +207,6 @@
           root.workspaceData = a
       }
 
-      Variants {
-          model: Quickshell.screens
-          NotificationPopup { required property var modelData; screen: modelData }
-      }
-
       ControlCenter { 
           id: controlCenter; 
           screen: Quickshell.screens[0] 

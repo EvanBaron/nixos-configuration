@@ -123,6 +123,11 @@ in
         clip-to-geometry true
     }
 
+    window-rule {
+        match app-id="com.github.ErikReider.swaync"
+        open-floating true
+    }
+
     spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET"
     spawn-at-startup "${pkgs.quickshell}/bin/quickshell"
     spawn-at-startup "${pkgs.swaybg}/bin/swaybg" "-i" "${config.theme.wallpaper}" "-m" "fill"
@@ -142,6 +147,7 @@ in
         Mod+D { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "launcher" "toggle"; }
         Mod+Shift+D { spawn "${pkgs.wofi}/bin/wofi" "--show" "drun"; }
         Mod+S { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "controlcenter" "toggle"; }
+        Mod+N { spawn "${pkgs.swaynotificationcenter}/bin/swaync-client" "-t" "-sw"; }
         Mod+Shift+Q { close-window; }
         Mod+F { maximize-column; }
         Mod+Shift+F { fullscreen-window; }

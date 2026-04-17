@@ -21,6 +21,7 @@
     ./desktop/niri.nix
     ./desktop/quickshell
     ./desktop/wofi.nix
+    ./desktop/swaync.nix
     ./zen.nix
     ./kitty.nix
     ./neovim.nix
