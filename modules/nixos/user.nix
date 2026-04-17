@@ -20,6 +20,7 @@
     users.groups.video.members = [ config.user.username ];
     users.users.${config.user.username} = {
       isNormalUser = true;
+      shell = pkgs.fish;
       extraGroups = [
         "wheel"
         "fuse"
@@ -35,5 +36,7 @@
         tree
       ];
     };
+
+    programs.fish.enable = true;
   };
 }

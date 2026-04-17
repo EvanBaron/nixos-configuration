@@ -40,6 +40,7 @@ in
       package = gtkThemeFromScheme { scheme = config.colorScheme; };
     };
 
+    gtk3.theme = config.gtk.theme;
     gtk4.theme = config.gtk.theme;
 
     iconTheme = {
@@ -66,6 +67,16 @@ in
         gtk-cursor-theme-name=Bibata-Modern-Ice
         gtk-application-prefer-dark-theme=1
       '';
+    };
+  };
+
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      gtk-theme = config.gtk.theme.name;
+      icon-theme = config.gtk.iconTheme.name;
+      cursor-theme = config.gtk.cursorTheme.name;
+      font-name = "${config.gtk.font.name} ${toString config.gtk.font.size}";
+      color-scheme = "prefer-dark";
     };
   };
 

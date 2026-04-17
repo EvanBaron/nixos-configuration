@@ -8,11 +8,13 @@
       size = 10;
     };
     settings = {
+      shell = "fish";
       scrollback_lines = 10000;
       enable_audio_bell = false;
       update_check_interval = 0;
       confirm_os_window_close = 0;
       background_opacity = "1.0";
+      hide_window_decorations = "yes";
 
       # Colors based on Nix-Colors palette
       foreground = "#${config.colorScheme.palette.base05}";
@@ -38,8 +40,8 @@
       color5 = "#${config.colorScheme.palette.base0E}";
       color13 = "#${config.colorScheme.palette.base0E}";
 
-      color6 = "#${config.colorScheme.palette.base0C}";
-      color14 = "#${config.colorScheme.palette.base0C}";
+      color6 = "#${config.colorScheme.palette.base06}";
+      color14 = "#${config.colorScheme.palette.base06}";
 
       color7 = "#${config.colorScheme.palette.base05}";
       color15 = "#${config.colorScheme.palette.base07}";

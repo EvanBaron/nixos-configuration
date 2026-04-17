@@ -34,6 +34,5 @@
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     WLR_NO_HARDWARE_CURSORS = "1";
     NIXOS_OZONE_WL = "1";
-    WLR_RENDER_NO_EXPLICIT_SYNC = 1;
   };
 }
