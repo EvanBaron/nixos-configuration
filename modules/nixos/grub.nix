@@ -1,16 +1,9 @@
 {
-  config,
   inputs,
+  themeData,
   ...
 }:
 
-let
-  currentWallpaper =
-    if config.networking.hostName == "monolith" then
-      ../../hosts/monolith/wallpaper.png
-    else
-      ../../hosts/nomad/wallpaper.png;
-in
 {
   imports = [ inputs.grub2-themes.nixosModules.default ];
 
@@ -33,7 +26,7 @@ in
       icon = "white";
       screen = "2k";
       footer = true;
-      splashImage = currentWallpaper;
+      splashImage = themeData.wallpapers.boot;
     };
   };
 }

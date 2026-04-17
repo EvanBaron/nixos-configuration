@@ -37,36 +37,72 @@
       url = "github:vinceliuice/grub2-themes";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixcord = {
+      url = "github:FlameFlag/nixcord";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    qml-niri = {
+      url = "github:imiric/qml-niri";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nixvim,
-      zen-browser,
       home-manager,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-    {
-      nixosConfigurations = {
-        monolith = nixpkgs.lib.nixosSystem {
+      lib = nixpkgs.lib;
+
+      hosts = [
+        "desktop"
+        "laptop"
+      ];
+      themes = [
+        "monolith"
+        "nomad"
+        "remnant"
+      ];
+
+      # Function to create a nixos system configuration
+      mkHost =
+        host: theme:
+        lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
-            ./hosts/monolith/configuration.nix
+            ./hosts/${host}/configuration.nix
+            (
+              if theme != null then
+                {
+                  activeTheme = theme;
+                }
+              else
+                { }
+            )
           ];
         };
 
-        nomad = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./hosts/nomad/configuration.nix
-          ];
-        };
-      };
+      # Generate configurations for each host with its default theme
+      baseConfigs = lib.genAttrs hosts (host: mkHost host null);
+
+      # Generate all combinations of host and theme
+      combinatorialConfigs = lib.listToAttrs (
+        lib.concatMap (
+          host:
+          map (theme: {
+            name = "${host}-${theme}";
+            value = mkHost host theme;
+          }) themes
+        ) hosts
+      );
+    in
+    {
+      nixosConfigurations = baseConfigs // combinatorialConfigs;
     };
 }

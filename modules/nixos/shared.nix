@@ -1,17 +1,18 @@
 {
   pkgs,
+  lib,
+  config,
   inputs,
   ...
 }:
 {
-  nixpkgs.config.allowUnfree = true;
-
   imports = [
     inputs.home-manager.nixosModules.default
+    ./hardware.nix
     ./user.nix
     ./grub.nix
     ./sddm.nix
-    ./sway.nix
+    ./niri.nix
     ./docker.nix
     ./android.nix
     ./rust.nix
@@ -20,71 +21,77 @@
     ./audio.nix
   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-
-  # Automatic Nix garbage collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 14d";
+  options.activeTheme = lib.mkOption {
+    type = lib.types.enum [ "monolith" "nomad" "remnant" ];
+    description = "The active theme for this host";
   };
 
-  networking.networkmanager.enable = true;
-  networking.firewall.allowedTCPPorts = [
-    8081
-    54321
-  ];
+  config = {
+    _module.args.themeData = import ../../themes/${config.activeTheme}/palette.nix;
 
-  time.timeZone = "Europe/Paris";
+    home-manager = {
+      extraSpecialArgs = {
+        inherit inputs;
+        user = config.user;
+        themeData = import ../../themes/${config.activeTheme}/palette.nix;
+        mylib = import ../home-manager/lib { inherit pkgs lib; };
+      };
+      sharedModules = [
+        { home.stateVersion = "25.05"; }
+      ];
+    };
 
-  services = {
-    openssh.enable = true;
-    xserver.enable = false;
-    gnome.gnome-keyring.enable = true;
-  };
+    nixpkgs.config.allowUnfree = true;
 
-  environment.etc."wayland-sessions/sway.desktop".text = ''
-    [Desktop Entry]
-    Name=Sway
-    Comment=An i3-compatible Wayland compositor
-    Exec=sway --unsupported-gpu
-    Type=Application
-    Keywords=tiling;wm;windowmanager;wayland;compositor;
-  '';
-
-  fonts = {
-    packages = with pkgs; [
-      fira
-      nerd-fonts.fira-code
+    nix.settings.experimental-features = [
+      "nix-command"
+      "flakes"
     ];
 
-    fontconfig.defaultFonts = {
-      serif = [ "Fira Sans" ];
-      sansSerif = [ "Fira Sans" ];
-      monospace = [ "Fira Code Nerd Font" ];
+    # Automatic Nix garbage collection
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 14d";
     };
+
+    programs.dconf.enable = true;
+
+    networking.networkmanager.enable = true;
+    networking.firewall.allowedTCPPorts = [
+      8081
+      54321
+    ];
+
+    time.timeZone = "Europe/Paris";
+
+    services = {
+      openssh.enable = true;
+      xserver.enable = false;
+      gnome.gnome-keyring.enable = true;
+    };
+
+    fonts = {
+      packages = with pkgs; [
+        fira
+        nerd-fonts.fira-code
+      ];
+
+      fontconfig.defaultFonts = {
+        serif = [ "Fira Sans" ];
+        sansSerif = [ "Fira Sans" ];
+        monospace = [ "Fira Code Nerd Font" ];
+      };
+    };
+
+    environment.systemPackages = with pkgs; [
+      wget
+      grim
+      slurp
+      wl-clipboard
+      xdg-utils
+    ];
+
+    system.stateVersion = "25.05";
   };
-
-  home-manager = {
-    extraSpecialArgs = { inherit inputs; };
-  };
-
-  environment.systemPackages = with pkgs; [
-    wget
-    grim
-    slurp
-    wl-clipboard
-    xdg-utils
-  ];
-
-  home-manager.sharedModules = [
-    { home.stateVersion = "25.05"; }
-  ];
-
-  system.stateVersion = "25.05";
 }

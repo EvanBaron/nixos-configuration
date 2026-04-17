@@ -1,19 +1,13 @@
 {
   pkgs,
-  config,
   inputs,
+  themeData,
   ...
 }:
 
 let
-  currentWallpaper =
-    if config.networking.hostName == "monolith" then
-      ../../hosts/monolith/wallpaper.png
-    else
-      ../../hosts/nomad/wallpaper.png;
-
   wallpaper = pkgs.runCommand "wallpaper.png" { } ''
-    cp ${currentWallpaper} $out
+    cp ${themeData.wallpapers.login} $out
   '';
 in
 {

@@ -4,9 +4,15 @@
   name = "Nomad Teal";
   slug = "nomad-teal";
 
+  wallpapers = {
+    boot = ./boot.png;
+    login = ./login.png;
+    desktop = ./desktop.png;
+  };
+
   palette = {
     base00 = "#1D2021"; # The main background color of the window
-    base01 = "#2c3132"; # Used for status bars, line numbers, or subtle UI elements
+    base01 = "#2C3132"; # Used for status bars, line numbers, or subtle UI elements
     base02 = "#394546"; # Used for text selection or highlighting the current line
     base03 = "#607E82"; # Used for comments, non-text characters, and subtle information
     base04 = "#889396"; # Used for status bar text or UI elements that need to contrast with 01

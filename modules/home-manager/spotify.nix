@@ -8,10 +8,16 @@ let
   spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
-  programs.spicetify = {
+    programs.spicetify = {
     enable = true;
     theme = spicePkgs.themes.sleek;
     colorScheme = "custom";
+    
+    # Force Wayland
+    # Note: Spicetify often inherits flags from its wrapper, but we can ensure
+    # the underlying electron process uses Wayland.
+    # Spicetify-nix provides a way to pass arguments.
+    spotifyLaunchFlags = "--ozone-platform=wayland";
 
     customColorScheme = {
       text = config.colorScheme.palette.base05;

@@ -29,7 +29,7 @@
   '';
 
   # Simple shell aliases
-  programs.bash.shellAliases = {
+  home.shellAliases = {
     py = "python3";
     venv = "python3 -m venv";
     activate = "source ./venv/bin/activate";

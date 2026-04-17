@@ -2,13 +2,14 @@
   config,
   pkgs,
   lib,
+  mylib,
   ...
 }:
 
 let
   stdenv = pkgs.stdenv;
   # Generate the theme content using the library function
-  zedThemeContent = import ./lib/zed-theme.nix {
+  zedThemeContent = mylib.zed {
     inherit (config) colorScheme;
     username = config.home.username;
   };
@@ -29,6 +30,7 @@ in
   home.file.".config/zed/themes/${config.colorScheme.name}.json" = {
     source = zedTheme;
     executable = false;
+    force = true;
   };
 
   home.packages = with pkgs; [
@@ -61,6 +63,7 @@ in
       };
 
       terminal = {
+        program = "fish";
         env = {
           TERM = "xterm-kitty";
         };

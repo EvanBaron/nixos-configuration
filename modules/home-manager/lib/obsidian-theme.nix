@@ -1,59 +1,8 @@
-{ lib }:
+{ hexToRgb }:
 
 {
-  hexToRgb =
-    hex:
-    let
-      r = builtins.substring 0 2 hex;
-      g = builtins.substring 2 2 hex;
-      b = builtins.substring 4 2 hex;
-
-      toDecimal =
-        h:
-        let
-          chars = lib.strings.stringToCharacters h;
-          values = map (
-            c:
-            if c == "0" then
-              0
-            else if c == "1" then
-              1
-            else if c == "2" then
-              2
-            else if c == "3" then
-              3
-            else if c == "4" then
-              4
-            else if c == "5" then
-              5
-            else if c == "6" then
-              6
-            else if c == "7" then
-              7
-            else if c == "8" then
-              8
-            else if c == "9" then
-              9
-            else if c == "a" || c == "A" then
-              10
-            else if c == "b" || c == "B" then
-              11
-            else if c == "c" || c == "C" then
-              12
-            else if c == "d" || c == "D" then
-              13
-            else if c == "e" || c == "E" then
-              14
-            else
-              15
-          ) chars;
-        in
-        builtins.elemAt values 0 * 16 + builtins.elemAt values 1;
-    in
-    "${toString (toDecimal r)},${toString (toDecimal g)},${toString (toDecimal b)}";
-
   # Generate complete Obsidian theme CSS from color palette
-  generateThemeCSS = colors: hexToRgb: ''
+  generateThemeCSS = colors: ''
     :root
     {
         /* Background colors - dark shades */
