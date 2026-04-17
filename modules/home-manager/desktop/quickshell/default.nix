@@ -13,14 +13,12 @@ let
   files = {
     "Colors.qml" = import ./Colors.nix { inherit palette; };
     "Bar.qml" = import ./Bar.nix { };
-    "ActionBar.qml" = import ./ActionBar.nix { };
+    "ActionBar.qml" = import ./ActionBar.nix { inherit pkgs; };
     "AppLauncher.qml" = import ./AppLauncher.nix { };
     "ControlCenter.qml" = import ./ControlCenter.nix { inherit pkgs; };
     "StatisticsPopup.qml" = import ./StatisticsPopup.nix { };
     "SystemStats.qml" = import ./SystemStats.nix { };
     "CalendarPopup.qml" = import ./CalendarPopup.nix { };
-    "NotificationPopup.qml" = import ./NotificationPopup.nix { };
-    "NotificationService.qml" = import ./NotificationService.nix { };
     "ControlCenterSlider.qml" = import ./ControlCenterSlider.nix { };
     "ControlCenterToggle.qml" = import ./ControlCenterToggle.nix { };
     "TrayPill.qml" = import ./TrayPill.nix { };
@@ -36,8 +34,6 @@ let
     StatisticsPopup 1.0 StatisticsPopup.qml
     singleton SystemStats 1.0 SystemStats.qml
     CalendarPopup 1.0 CalendarPopup.qml
-    NotificationPopup 1.0 NotificationPopup.qml
-    singleton NotificationService 1.0 NotificationService.qml
     ControlCenterSlider 1.0 ControlCenterSlider.qml
     ControlCenterToggle 1.0 ControlCenterToggle.qml
     TrayPill 1.0 TrayPill.qml
