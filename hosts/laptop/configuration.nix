@@ -17,9 +17,6 @@
 
   networking.hostName = "laptop";
 
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
-
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
   powerManagement.powertop.enable = true;

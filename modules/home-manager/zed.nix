@@ -56,6 +56,7 @@ in
 
     userSettings = {
       theme = config.colorScheme.name;
+      font_fallbacks = [ "Symbols Nerd Font Mono" ];
 
       node = {
         path = lib.getExe pkgs.nodejs;
@@ -65,11 +66,12 @@ in
       terminal = {
         program = "fish";
         env = {
-          TERM = "xterm-kitty";
+          TERM = "xterm-256color";
         };
 
-        font_family = "FiraCode Nerd Font Mono";
+        font_family = "Zed Mono";
         font_size = 10;
+        line_height = "standard";
       };
 
       vim_mode = false;
@@ -78,6 +80,28 @@ in
       buffer_font_family = "FiraCode Nerd Font Mono";
 
       languages = {
+        "JSON" = {
+          formatter = {
+            external = {
+              command = "prettier";
+              arguments = [
+                "--stdin-filepath"
+                "{buffer_path}"
+              ];
+            };
+          };
+        };
+        "JSONC" = {
+          formatter = {
+            external = {
+              command = "prettier";
+              arguments = [
+                "--stdin-filepath"
+                "{buffer_path}"
+              ];
+            };
+          };
+        };
         Rust = {
           language_server = {
             external = true;
