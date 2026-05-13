@@ -10,6 +10,8 @@
       "devtools.debugger.remote-enabled" = true;
       "devtools.chrome.enabled" = true;
       "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+      "widget.wayland.dmabuf-textures.enabled" = false;
+      "media.ffmpeg.vaapi.enabled" = false;
     };
   };
 

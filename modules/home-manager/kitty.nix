@@ -15,6 +15,7 @@
       confirm_os_window_close = 0;
       background_opacity = "1.0";
       hide_window_decorations = "yes";
+      linux_display_server = "wayland";
 
       # Colors based on Nix-Colors palette
       foreground = "#${config.colorScheme.palette.base05}";

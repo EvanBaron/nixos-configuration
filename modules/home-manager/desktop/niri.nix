@@ -83,8 +83,7 @@ in
         }
 
         mouse {
-            accel-speed 0.2
-            accel-profile "adaptive"
+            accel-profile "flat"
         }
     }
 
