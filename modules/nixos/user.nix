@@ -26,6 +26,7 @@
         "fuse"
 
         "docker"
+        "audio"
 
         # Android
         "kvm"

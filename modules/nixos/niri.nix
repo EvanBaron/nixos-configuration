@@ -14,6 +14,9 @@
     wl-clipboard
     swaybg
 
+    # XWayland support
+    xwayland-satellite
+
     # Screenshot tools
     grim
     slurp

@@ -4,8 +4,6 @@
 }:
 
 {
-  services.easyeffects.enable = true;
-
   home.packages = with pkgs; [
     # DAWs and Guitar tools
     zrythm

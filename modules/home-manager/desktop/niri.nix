@@ -127,7 +127,8 @@ in
         open-floating true
     }
 
-    spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET"
+    spawn-at-startup "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
+    spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY"
     spawn-at-startup "${pkgs.quickshell}/bin/quickshell"
     spawn-at-startup "${pkgs.swaybg}/bin/swaybg" "-i" "${config.theme.wallpaper}" "-m" "fill"
     ${
@@ -215,6 +216,7 @@ in
     }
 
     environment {
+        DISPLAY ":0"
         ${envToKdl waylandEnv}
     }
 
