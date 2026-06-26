@@ -4,6 +4,7 @@
 {
   virtualisation.docker = {
     enable = true;
+    extraOptions = "--dns 8.8.8.8 --dns 1.1.1.1";
 
     rootless = {
       enable = true;

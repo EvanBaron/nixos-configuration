@@ -9,6 +9,6 @@
   ];
 
   home.packages = with pkgs; [
-    gemini-cli
+    antigravity-cli
   ];
 }

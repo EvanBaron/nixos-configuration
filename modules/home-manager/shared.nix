@@ -30,7 +30,6 @@
     ./discord.nix
     ./obsidian.nix
     ./audio.nix
-    ./minecraft.nix
   ];
 
   options.theme.wallpaper = lib.mkOption {

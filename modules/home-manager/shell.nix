@@ -8,6 +8,10 @@ in
     interactiveShellInit = ''
       set -g fish_greeting
 
+      # Force Qt applications launched from terminal to use XCB (XWayland)
+      # to prevent the Android SDK emulator from crashing on Wayland.
+      set -gx QT_QPA_PLATFORM xcb
+
       # Fish colors
       set -g fish_color_normal ${palette.base05}
       set -g fish_color_command ${palette.base06} --bold

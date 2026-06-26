@@ -156,7 +156,10 @@
       slurp
       wl-clipboard
       xdg-utils
+      openjdk17
     ];
+
+    environment.variables.JAVA_HOME = "${pkgs.openjdk17}";
 
     system.stateVersion = "25.05";
   };
