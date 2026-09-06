@@ -16,6 +16,7 @@
     inputs.spicetify-nix.homeManagerModules.default
     ./git.nix
     ./zed.nix
+    ./opencode.nix
     ./gtk.nix
     ./shell.nix
     ./desktop/niri.nix
