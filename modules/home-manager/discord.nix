@@ -12,6 +12,7 @@
 
   programs.nixcord = {
     enable = true;
+    discord.enable = false;
     vesktop.enable = true;
     config = {
       useQuickCss = false;
@@ -31,8 +32,7 @@
 
         # Chat
         callTimer.enable = true;
-        CopyUserURLs.enable = true;
-        favoriteGifSearch.enable = true;
+        copyUserUrls.enable = true;
         noDevtoolsWarning.enable = true;
         petpet.enable = true;
         validUser.enable = true;
