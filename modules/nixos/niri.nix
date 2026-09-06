@@ -27,6 +27,11 @@
 
   security.polkit.enable = true;
 
+  # Give sleep inhibitors (swayidle's before-sleep hook, see
+  # desktop/niri.nix) more headroom before logind suspends anyway.
+  # Default is 5s, which a network mount teardown could brush up against.
+  services.logind.settings.Login.InhibitDelayMaxSec = 10;
+
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
