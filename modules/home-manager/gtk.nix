@@ -19,6 +19,7 @@ let
 in
 {
   home.pointerCursor = {
+    enable = true;
     gtk.enable = true;
     x11.enable = true;
     package = pkgs.bibata-cursors;
@@ -68,6 +69,20 @@ in
         gtk-application-prefer-dark-theme=1
       '';
     };
+
+    gtk3.extraCss = ''
+      @define-color theme_selected_bg_color #${config.colorScheme.palette.base06};
+      @define-color accent_color #${config.colorScheme.palette.base06};
+      @define-color accent_bg_color #${config.colorScheme.palette.base06};
+      @define-color accent_fg_color #${config.colorScheme.palette.base07};
+    '';
+
+    gtk4.extraCss = ''
+      @define-color theme_selected_bg_color #${config.colorScheme.palette.base06};
+      @define-color accent_color #${config.colorScheme.palette.base06};
+      @define-color accent_bg_color #${config.colorScheme.palette.base06};
+      @define-color accent_fg_color #${config.colorScheme.palette.base07};
+    '';
   };
 
   dconf.settings = {
@@ -83,7 +98,7 @@ in
   # Qt theming to match GTK
   qt = {
     enable = true;
-    platformTheme.name = "gtk";
+    platformTheme.name = "gtk3";
     style.name = "gtk2";
   };
 }
