@@ -3,11 +3,11 @@
 
 let
   androidComposition = pkgs.androidenv.composeAndroidPackages {
-    platformVersions = [ "35" ];
+    platformVersions = [ "35" "36" ];
     includeEmulator = true;
     includeSystemImages = true;
-    systemImageTypes = [ "google_apis" ];
-    abiVersions = [ "x86_64" ];
+    systemImageTypes = [ "google_apis" "google_apis_playstore" ];
+    abiVersions = [ "x86_64" "arm64-v8a" ];
     includeSources = false;
   };
 
@@ -59,15 +59,15 @@ in
     libxcb
     libXau
     libXpm
-    xorg.libxkbfile
-    xorg.libSM
-    xorg.libICE
-    xorg.xcbutilcursor
-    xorg.xcbutil
-    xorg.xcbutilwm
-    xorg.xcbutilimage
-    xorg.xcbutilkeysyms
-    xorg.xcbutilrenderutil
+    libxkbfile
+    libsm
+    libice
+    libxcb-cursor
+    libxcb-util
+    libxcb-wm
+    libxcb-image
+    libxcb-keysyms
+    libxcb-render-util
     freetype
     fontconfig
     pulseaudio
