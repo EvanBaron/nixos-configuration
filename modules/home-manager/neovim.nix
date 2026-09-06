@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   programs.nixvim = {
@@ -6,6 +11,8 @@
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
+
+    nixpkgs.source = inputs.nixpkgs;
 
     extraPlugins = [ pkgs.vimPlugins.base16-nvim ];
 
