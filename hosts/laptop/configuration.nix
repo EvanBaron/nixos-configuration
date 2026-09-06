@@ -9,6 +9,7 @@
     ./hardware-configuration.nix
     ../../modules/nixos/shared.nix
     ../../modules/nixos/nvidia/laptop.nix
+    ../../modules/nixos/sunshine.nix
   ];
 
   activeTheme = lib.mkDefault "nomad";
