@@ -20,6 +20,7 @@
     # Screenshot tools
     grim
     slurp
+    jq
 
     wf-recorder
   ];
