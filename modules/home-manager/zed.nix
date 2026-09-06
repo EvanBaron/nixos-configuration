@@ -36,14 +36,13 @@ in
   home.packages = with pkgs; [
     texlab
     zathura
-    texlive.combined.scheme-full
+    texliveFull
   ];
 
   programs.zed-editor = {
     enable = true;
     extensions = [
       "nix"
-      "rust-analyzer"
       "toml"
       "make"
       "json"
@@ -56,7 +55,7 @@ in
 
     userSettings = {
       theme = config.colorScheme.name;
-      font_fallbacks = [ "Symbols Nerd Font Mono" ];
+      buffer_font_fallbacks = [ "Symbols Nerd Font Mono" ];
 
       node = {
         path = lib.getExe pkgs.nodejs;
@@ -79,7 +78,27 @@ in
       buffer_font_size = 10;
       buffer_font_family = "FiraCode Nerd Font Mono";
 
+      format_on_save = "on";
+
       languages = {
+        TypeScript = {
+          code_actions_on_format = {
+            "source.organizeImports" = true;
+            "source.fixAll.eslint" = true;
+          };
+        };
+        TSX = {
+          code_actions_on_format = {
+            "source.organizeImports" = true;
+            "source.fixAll.eslint" = true;
+          };
+        };
+        JavaScript = {
+          code_actions_on_format = {
+            "source.organizeImports" = true;
+            "source.fixAll.eslint" = true;
+          };
+        };
         "JSON" = {
           formatter = {
             external = {
@@ -103,30 +122,16 @@ in
           };
         };
         Rust = {
-          language_server = {
-            external = true;
-            command = "rust-analyzer";
-          };
+          language_servers = [ "rust-analyzer" ];
         };
         C = {
-          language_server = {
-            external = true;
-            command = "clangd";
-            arguments = [ clang_args ];
-          };
+          language_servers = [ "clangd" ];
         };
         "C++" = {
-          language_server = {
-            external = true;
-            command = "clangd";
-            arguments = [ clang_args ];
-          };
+          language_servers = [ "clangd" ];
         };
         Python = {
-          language_server = {
-            external = true;
-            command = "basedpyright-langserver";
-          };
+          language_servers = [ "basedpyright" ];
           formatter = {
             external = {
               command = "black";
@@ -141,6 +146,22 @@ in
       };
 
       lsp = {
+        rust-analyzer = {
+          binary = {
+            path = "rust-analyzer";
+          };
+        };
+        clangd = {
+          binary = {
+            path = "clangd";
+            arguments = [ clang_args ];
+          };
+        };
+        basedpyright = {
+          binary = {
+            path = "basedpyright-langserver";
+          };
+        };
         texlab = {
           binary = {
             path_lookup = true;
