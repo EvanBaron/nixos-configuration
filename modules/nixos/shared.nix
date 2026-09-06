@@ -19,6 +19,7 @@
     ./c.nix
     ./thunar.nix
     ./audio.nix
+    ./krb5.nix
   ];
 
   options.activeTheme = lib.mkOption {
