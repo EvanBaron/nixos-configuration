@@ -54,6 +54,8 @@
       nixd
       nil
       docker-compose
+      thunderbird
+
     ];
 
     home.sessionVariables = {
