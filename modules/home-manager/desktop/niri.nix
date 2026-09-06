@@ -160,6 +160,12 @@ in
         Mod+Shift+Up    { move-window-up; }
         Mod+Shift+Right { move-column-right; }
 
+        // Move focused window to another monitor
+        Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }
+        Mod+Shift+Ctrl+Down  { move-window-to-monitor-down; }
+        Mod+Shift+Ctrl+Up    { move-window-to-monitor-up; }
+        Mod+Shift+Ctrl+Right { move-window-to-monitor-right; }
+
         // Column Resizing
         Mod+Minus { set-column-width "-10%"; }
         Mod+Equal { set-column-width "+10%"; }
