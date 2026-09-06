@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  inputs,
   ...
 }:
 {
@@ -20,7 +19,7 @@
 
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
-  powerManagement.powertop.enable = true;
+  # powerManagement.powertop.enable = true;
 
   home-manager.users = {
     "${config.user.username}" = import ./home.nix;
