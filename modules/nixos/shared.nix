@@ -19,6 +19,7 @@
     ./c.nix
     ./thunar.nix
     ./audio.nix
+    ./mem-watch.nix
     ./krb5.nix
   ];
 
@@ -137,6 +138,13 @@
       dbus.enable = true;
       dbus.implementation = "broker";
     };
+
+    zramSwap = {
+      enable = true;
+      memoryPercent = 50;
+    };
+
+    systemd.oomd.enableUserSlices = true;
 
     fonts = {
       packages = with pkgs; [
