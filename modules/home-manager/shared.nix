@@ -14,8 +14,10 @@
     inputs.zen-browser.homeModules.beta
     inputs.nixvim.homeModules.nixvim
     inputs.spicetify-nix.homeManagerModules.default
+    inputs.sops-nix.homeManagerModules.sops
     ./theme.nix
     ./git.nix
+    ./sops.nix
     ./zed.nix
     ./clangd.nix
     ./opencode.nix

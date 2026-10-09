@@ -1,0 +1,8 @@
+# Recipients for sops-encrypted files under secrets/ (safe to publish).
+keys:
+  - &ebaron age1zj48y0jvue3hhn0mxd7mcdfz50ew2xqzfrm8z6zxxend98x6hduqetsxus
+creation_rules:
+  - path_regex: ^secrets/
+    key_groups:
+      - age:
+          - *ebaron
