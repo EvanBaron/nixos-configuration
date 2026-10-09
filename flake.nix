@@ -63,11 +63,7 @@
         "desktop"
         "laptop"
       ];
-      themes = [
-        "monolith"
-        "nomad"
-        "remnant"
-      ];
+      themes = import ./themes;
 
       # Function to create a nixos system configuration
       mkHost =

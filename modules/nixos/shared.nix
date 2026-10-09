@@ -24,12 +24,8 @@
   ];
 
   options.activeTheme = lib.mkOption {
-    type = lib.types.enum [
-      "monolith"
-      "nomad"
-      "remnant"
-    ];
-    description = "The active theme for this host";
+    type = lib.types.enum (import ../../themes);
+    description = "The default theme for this host (also used for GRUB and SDDM)";
   };
 
   config = {
