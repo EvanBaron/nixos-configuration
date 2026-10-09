@@ -50,6 +50,39 @@ in
     QT_QPA_PLATFORM = "xcb";
   };
 
+  # Run as user units rather than spawn-at-startup so a theme switch
+  # (home-manager/theme.nix) restarts them with the new wallpaper/colors.
+  systemd.user.services.swaybg = {
+    Unit = {
+      Description = "Wallpaper";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.swaybg}/bin/swaybg -i ${config.theme.wallpaper} -m fill";
+      Restart = "on-failure";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
+  systemd.user.services.quickshell = {
+    Unit = {
+      Description = "Quickshell bar";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+      X-Restart-Triggers = [ "${config.xdg.configFile."quickshell".source}" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.quickshell}/bin/quickshell";
+      Environment = lib.mapAttrsToList (n: v: "${n}=${v}") waylandEnv;
+      Restart = "on-failure";
+      # Apps started from the launcher live in this unit's cgroup; don't take
+      # them down when the bar restarts.
+      KillMode = "process";
+    };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   xdg.configFile."niri/config.kdl".text = ''
     hotkey-overlay {
         skip-at-startup
@@ -123,8 +156,6 @@ in
 
     spawn-at-startup "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
     spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY"
-    spawn-at-startup "${pkgs.quickshell}/bin/quickshell"
-    spawn-at-startup "${pkgs.swaybg}/bin/swaybg" "-i" "${config.theme.wallpaper}" "-m" "fill"
     ${
       if isLaptop then
         ''
