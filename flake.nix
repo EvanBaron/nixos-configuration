@@ -51,6 +51,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Private modules and secrets that stay out of this repo.
+    # After committing there: nix flake update private
+    private.url = "git+file:///home/ebaron/nixos-private";
   };
 
   outputs =

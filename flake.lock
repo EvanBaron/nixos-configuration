@@ -334,6 +334,21 @@
         "type": "github"
       }
     },
+    "private": {
+      "locked": {
+        "lastModified": 1791575945,
+        "narHash": "sha256-a3CopjBLCjD8ACYyTnhKuqOeY82lP9I5t62jOtLHoCE=",
+        "ref": "refs/heads/main",
+        "rev": "0cd6f814aa3d6d62eded11c4deef9b873c5c041f",
+        "revCount": 1,
+        "type": "git",
+        "url": "file:///home/ebaron/nixos-private"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/ebaron/nixos-private"
+      }
+    },
     "qml-niri": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -386,6 +401,7 @@
         "nixcord": "nixcord",
         "nixpkgs": "nixpkgs",
         "nixvim": "nixvim",
+        "private": "private",
         "qml-niri": "qml-niri",
         "silentSDDM": "silentSDDM",
         "sops-nix": "sops-nix",

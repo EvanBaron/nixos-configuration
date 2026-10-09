@@ -15,6 +15,7 @@
     inputs.nixvim.homeModules.nixvim
     inputs.spicetify-nix.homeManagerModules.default
     inputs.sops-nix.homeManagerModules.sops
+    inputs.private.homeModules.default
     ./theme.nix
     ./git.nix
     ./sops.nix
