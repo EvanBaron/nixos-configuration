@@ -26,12 +26,30 @@ in
 {
   imports = [
     ./swaylock.nix
+    {
+      # Shell snippets run around suspend, e.g. to tear down network mounts that
+      # would otherwise hang the suspend (keep them under InhibitDelayMaxSec).
+      options.desktop.sleepHooks = {
+        beforeSleep = lib.mkOption {
+          type = lib.types.lines;
+          default = "";
+        };
+        afterResume = lib.mkOption {
+          type = lib.types.lines;
+          default = "";
+        };
+      };
+    }
   ];
 
   services.swayidle = lib.mkIf isLaptop {
     enable = true;
     events = {
-      before-sleep = "${pkgs.swaylock-effects}/bin/swaylock -fF";
+      before-sleep = "${pkgs.writeShellScript "before-sleep" ''
+        ${config.desktop.sleepHooks.beforeSleep}
+        ${pkgs.swaylock-effects}/bin/swaylock -fF
+      ''}";
+      after-resume = "${pkgs.writeShellScript "after-resume" config.desktop.sleepHooks.afterResume}";
       lock = "${pkgs.swaylock-effects}/bin/swaylock -fF";
     };
     timeouts = [
