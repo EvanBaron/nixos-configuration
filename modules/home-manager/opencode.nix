@@ -1,22 +1,30 @@
 {
+  config,
+  lib,
   pkgs,
   ...
 }:
 
 {
-  home.packages = with pkgs; [
+  options.opencode.desktopGpuUrl = lib.mkOption {
+    type = lib.types.str;
+    default = "http://localhost:8080/v1";
+    description = "OpenAI-compatible endpoint of the desktop GPU server";
+  };
+
+  config.home.packages = with pkgs; [
     opencode
     typescript-language-server
   ];
 
-  home.file.".config/opencode/opencode.json".text = builtins.toJSON {
+  config.home.file.".config/opencode/opencode.json".text = builtins.toJSON {
     "\$schema" = "https://opencode.ai/config.json";
     provider = {
       desktop-gpu = {
         npm = "@ai-sdk/openai-compatible";
         name = "Desktop-GPU";
         options = {
-          baseURL = "http://localhost:8080/v1";
+          baseURL = config.opencode.desktopGpuUrl;
         };
         models = {
           "gemma-4-12b" = {
