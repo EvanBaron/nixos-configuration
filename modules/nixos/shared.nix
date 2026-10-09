@@ -21,6 +21,7 @@
     ./audio.nix
     ./mem-watch.nix
     ./krb5.nix
+    ./network-displays.nix
   ];
 
   options.activeTheme = lib.mkOption {
