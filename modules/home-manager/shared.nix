@@ -14,6 +14,7 @@
     inputs.zen-browser.homeModules.beta
     inputs.nixvim.homeModules.nixvim
     inputs.spicetify-nix.homeManagerModules.default
+    ./theme.nix
     ./git.nix
     ./zed.nix
     ./opencode.nix

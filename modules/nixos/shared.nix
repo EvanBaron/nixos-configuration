@@ -43,6 +43,16 @@
       ];
     };
 
+    # Stable path to the base home-manager generation, whose specialisation/
+    # dir holds one prebuilt variant per theme (see home-manager/theme.nix).
+    environment.etc."home-manager-generation".source =
+      config.home-manager.users.${config.user.username}.home.activationPackage;
+
+    # Activating the base generation (boot, nixos-rebuild) resets the theme to
+    # the default, so re-apply whatever theme-switch last selected.
+    systemd.services."home-manager-${config.user.username}".serviceConfig.ExecStartPost =
+      "${config.home-manager.users.${config.user.username}.theme.switchPackage}/bin/theme-switch --restore";
+
     nixpkgs.config.allowUnfree = true;
 
     nix.settings.experimental-features = [
