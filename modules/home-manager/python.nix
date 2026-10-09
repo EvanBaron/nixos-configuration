@@ -19,15 +19,6 @@
     poetry
   ];
 
-  # Basic pip configuration
-  home.file.".config/pip/pip.conf".text = ''
-    [global]
-    user = true
-
-    [install]
-    user = true
-  '';
-
   # Simple shell aliases
   home.shellAliases = {
     py = "python3";
