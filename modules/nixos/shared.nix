@@ -142,6 +142,9 @@
       openssh.enable = true;
       xserver.enable = false;
       gnome.gnome-keyring.enable = true;
+      # gcr's SSH agent hangs when it can't show its passphrase prompt;
+      # without an agent, ssh asks for the key passphrase in the terminal.
+      gnome.gcr-ssh-agent.enable = false;
       dbus.enable = true;
       dbus.implementation = "broker";
     };
