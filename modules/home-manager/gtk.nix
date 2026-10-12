@@ -98,7 +98,8 @@ in
   # Qt theming to match GTK
   qt = {
     enable = true;
+    # qt6gtk2 (style "gtk2") was removed from nixpkgs; the gtk3 platform
+    # theme still provides GTK fonts, icons and dialogs, with the Fusion style.
     platformTheme.name = "gtk3";
-    style.name = "gtk2";
   };
 }

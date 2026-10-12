@@ -116,9 +116,18 @@ in
         };
         C = {
           language_servers = [ "clangd" ];
+          formatter = "language_server";
         };
         "C++" = {
           language_servers = [ "clangd" ];
+          formatter = "language_server";
+        };
+        Go = {
+          language_servers = [ "gopls" ];
+          formatter = "language_server";
+          code_actions_on_format = {
+            "source.organizeImports" = true;
+          };
         };
         Python = {
           language_servers = [ "basedpyright" ];
@@ -144,6 +153,23 @@ in
         clangd = {
           binary = {
             path = "clangd";
+          };
+        };
+        gopls = {
+          binary = {
+            path_lookup = true;
+          };
+          initialization_options = {
+            gofumpt = false;
+            staticcheck = true;
+            hints = {
+              assignVariableTypes = true;
+              compositeLiteralFields = true;
+              constantValues = true;
+              functionTypeParameters = true;
+              parameterNames = true;
+              rangeVariableTypes = true;
+            };
           };
         };
         basedpyright = {

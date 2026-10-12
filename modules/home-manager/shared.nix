@@ -32,6 +32,7 @@
     ./kitty.nix
     ./neovim.nix
     ./python.nix
+    ./go.nix
     ./spotify.nix
     ./discord.nix
     ./obsidian.nix
