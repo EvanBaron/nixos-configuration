@@ -37,6 +37,28 @@
 
       WlrLayershell.namespace: "action-bar"
 
+      ListModel { id: workspaceModel }
+      onWorkspaceDataChanged: syncWorkspaces()
+      Component.onCompleted: syncWorkspaces()
+      function syncWorkspaces() {
+          var name = bar.screen ? bar.screen.name : ""
+          var mine = workspaceData.filter(function(w) { return w.output === name })
+          // Unknown output names (e.g. a nested session): show everything rather than nothing.
+          if (mine.length === 0) mine = workspaceData
+          for (var i = 0; i < mine.length; i++) {
+              var w = mine[i]
+              var row = { wsId: w.id, idx: w.idx, active: w.active, focused: w.focused, occupied: w.occupied }
+              if (i < workspaceModel.count) {
+                  for (var k in row)
+                      if (workspaceModel.get(i)[k] !== row[k]) workspaceModel.setProperty(i, k, row[k])
+              } else {
+                  workspaceModel.append(row)
+              }
+          }
+          if (workspaceModel.count > mine.length)
+              workspaceModel.remove(mine.length, workspaceModel.count - mine.length)
+      }
+
       Process { id: spawn }
       function run(cmd) { spawn.command = cmd; spawn.running = true }
 
@@ -55,22 +77,28 @@
           anchors { fill: parent; leftMargin: Style.space12; rightMargin: Style.space12 }
           spacing: Style.space12
 
-          // Workspaces: the focused dash widens to 32px and takes the accent; click to focus.
+          // Workspaces on this monitor: the active dash widens to 32px (accent when it is the
+          // focused one, fg on another monitor); click to focus. The model is updated in place
+          // so the dashes survive niri events and their width/colour Behaviors run.
           Row {
               spacing: Style.space6
               Layout.alignment: Qt.AlignVCenter
               Repeater {
-                  model: bar.workspaceData
+                  model: workspaceModel
                   Item {
-                      required property var modelData
+                      id: wsItem
+                      required property int idx
+                      required property bool active
+                      required property bool focused
+                      required property bool occupied
                       width: dash.width; height: Style.barHeight
                       Rectangle {
                           id: dash
                           anchors.verticalCenter: parent.verticalCenter
-                          width: modelData.focused ? 32 : 20
+                          width: wsItem.active ? 32 : 20
                           height: 4; radius: Style.radiusXs
-                          color: modelData.focused   ? Colors.accent
-                               : modelData.occupied  ? Colors.fgAlt
+                          color: wsItem.active ? (wsItem.focused ? Colors.accent : Colors.fg)
+                               : wsItem.occupied ? Colors.fgAlt
                                : wsMouse.containsMouse ? Colors.borderStrong
                                : Colors.highlight
                           Behavior on width { NumberAnimation { duration: Style.durBase; easing.type: Style.easeOut } }
@@ -81,7 +109,7 @@
                           anchors.fill: parent
                           hoverEnabled: true
                           cursorShape: Qt.PointingHandCursor
-                          onClicked: bar.run(["niri", "msg", "action", "focus-workspace", String(modelData.idx)])
+                          onClicked: bar.run(["niri", "msg", "action", "focus-workspace", String(wsItem.idx)])
                       }
                   }
               }

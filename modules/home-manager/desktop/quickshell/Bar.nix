@@ -176,8 +176,8 @@
               onRead: data => {
                   try {
                       var e = JSON.parse(data)
-                      if (e.WorkspacesChanged)       root.parseWorkspaces(e.WorkspacesChanged.workspaces)
-                      else if (e.WorkspaceActivated) workspaceQuery.running = true
+                      if (e.WorkspacesChanged) root.parseWorkspaces(e.WorkspacesChanged.workspaces)
+                      else if (e.WorkspaceActivated || e.WorkspaceActiveWindowChanged) root.refreshWorkspaces()
                   } catch(_) {}
               }
           }
@@ -185,6 +185,12 @@
       }
       Timer { id: workspaceRestart; interval: 1500; onTriggered: workspaceStream.running = true }
 
+      // A query already in flight would swallow a second request; run once more when it ends.
+      property bool _workspaceQueryPending: false
+      function refreshWorkspaces() {
+          if (workspaceQuery.running) root._workspaceQueryPending = true
+          else workspaceQuery.running = true
+      }
       Process {
           id: workspaceQuery
           command: ["niri", "msg", "--json", "workspaces"]
@@ -199,19 +205,24 @@
                   } catch(_) {}
               }
           }
+          onRunningChanged: if (!running && root._workspaceQueryPending) { root._workspaceQueryPending = false; running = true }
           Component.onCompleted: running = true
       }
 
+      // Every niri workspace on every output; each ActionBar keeps its own monitor's slice.
       function parseWorkspaces(list) {
           if (!Array.isArray(list)) return
           var a = []
           for (var i = 0; i < list.length; i++) {
               var w = list[i]
-              a.push({ idx: w.idx !== undefined ? w.idx : i+1,
+              a.push({ id: w.id,
+                       idx: w.idx !== undefined ? w.idx : i+1,
+                       output: w.output || "",
+                       active: !!w.is_active,
                        focused: !!w.is_focused,
                        occupied: w.active_window_id != null })
           }
-          a.sort(function(x, y) { return x.idx - y.idx })
+          a.sort(function(x, y) { return x.output === y.output ? x.idx - y.idx : (x.output < y.output ? -1 : 1) })
           root.workspaceData = a
       }
 
