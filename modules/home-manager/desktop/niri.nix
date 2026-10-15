@@ -151,7 +151,8 @@ in
 
     layout {
         gaps 6
-        center-focused-column "never"
+        // Scroll a column into view only when it doesn't fit, instead of re-centring on every move.
+        center-focused-column "on-overflow"
 
         preset-column-widths {
             proportion 0.33333
@@ -182,15 +183,6 @@ in
 
     spawn-at-startup "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
     spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY"
-    ${
-      if isLaptop then
-        ''
-          spawn-at-startup "${pkgs.networkmanagerapplet}/bin/nm-applet" "--indicator"
-          spawn-at-startup "${pkgs.blueman}/bin/blueman-applet"
-        ''
-      else
-        ""
-    }
 
     binds {
         // Essential
@@ -207,9 +199,12 @@ in
         Mod+Shift+E { quit; }
         Mod+V { toggle-window-floating; }
 
-        // Navigation — Left/Right also center the focused column via IPC
-        Mod+Left  { spawn "sh" "-c" "${pkgs.niri}/bin/niri msg action focus-column-left  && ${pkgs.niri}/bin/niri msg action center-focused-column"; }
-        Mod+Right { spawn "sh" "-c" "${pkgs.niri}/bin/niri msg action focus-column-right && ${pkgs.niri}/bin/niri msg action center-focused-column"; }
+        Mod+O { toggle-overview; }
+        Mod+Shift+Slash { show-hotkey-overlay; }
+
+        // Navigation
+        Mod+Left  { focus-column-left; }
+        Mod+Right { focus-column-right; }
         Mod+Down  { focus-window-down; }
         Mod+Up    { focus-window-up; }
 
@@ -224,9 +219,17 @@ in
         Mod+Shift+Ctrl+Up    { move-window-to-monitor-up; }
         Mod+Shift+Ctrl+Right { move-window-to-monitor-right; }
 
-        // Column Resizing
+        // Columns
         Mod+Minus { set-column-width "-10%"; }
         Mod+Equal { set-column-width "+10%"; }
+        Mod+R { switch-preset-column-width; }
+        Mod+C { center-column; }
+        Mod+BracketLeft  { consume-or-expel-window-left; }
+        Mod+BracketRight { consume-or-expel-window-right; }
+
+        // Mod+scroll moves between workspaces
+        Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+        Mod+WheelScrollUp   cooldown-ms=150 { focus-workspace-up; }
 
         // Workspaces
         Mod+1 { focus-workspace 1; }
