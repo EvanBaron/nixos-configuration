@@ -46,6 +46,12 @@
     default = themeData.wallpapers.desktop;
   };
 
+  options.theme.ui = lib.mkOption {
+    type = lib.types.attrsOf lib.types.str;
+    description = "Contrast-safe UI role colours (fgAlt, fgMuted, accent, borderStrong, critical) for the active theme";
+    default = themeData.ui;
+  };
+
   config = {
     nixpkgs.config.allowUnfree = true;
     colorScheme = {

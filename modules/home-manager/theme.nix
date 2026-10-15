@@ -79,6 +79,7 @@ in
         configuration = {
           colorScheme = lib.mkForce { inherit (t) name slug palette; };
           theme.wallpaper = lib.mkForce t.wallpapers.desktop;
+          theme.ui = lib.mkForce t.ui;
         };
       }
     );

@@ -28,4 +28,14 @@
     base0E = "#B16286"; # Keywords, Storage, Selector, Markup Link URL
     base0F = "#7C6F64"; # Deprecated, Opening/Closing Embedded Language Tags
   };
+
+  # UI roles derived from the palette so every text colour holds WCAG AA (4.5:1)
+  # on base00, base01 and base02. See the "NixOS Desktop" design system.
+  ui = {
+    fgAlt = "#A4B1B5"; # Secondary text: descriptions, sublabels, field labels
+    fgMuted = "#839CA0"; # Tertiary text: placeholders, counts, timestamps (not on base02)
+    accent = "#02A7A8"; # UI accent, as ink or fill (base06 when it already passes)
+    borderStrong = "#607E82"; # Control outlines, 3:1 on base00/base01
+    critical = "#EA746F"; # Critical state text and destructive hover
+  };
 }
