@@ -96,8 +96,6 @@
     };
   };
 
-  boot.kernelParams = [ "usbcore.autosuspend=-1" ];
-
   # Prevent PowerTop/System from suspending the Scarlett Solo
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="1235", ATTR{idProduct}=="8211", ATTR{power/control}="on"
