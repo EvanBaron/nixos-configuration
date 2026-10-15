@@ -33,6 +33,8 @@
           "log-out": "<path d='m16 17 5-5-5-5'/><path d='M21 12H9'/><path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4'/>",
           "memory-bar": "<rect x='6' y='2' width='12' height='20' rx='2'/><path d='M10 7h4'/><path d='M10 12h4'/><path d='M10 17h4'/>",
           "memory": "<rect x='6' y='2' width='12' height='20' rx='2'/><path d='M10 7h4'/><path d='M10 12h4'/><path d='M10 17h4'/><path d='M4 7h2'/><path d='M4 12h2'/><path d='M4 17h2'/><path d='M18 7h2'/><path d='M18 12h2'/><path d='M18 17h2'/>",
+          "mic": "<path d='M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z'/><path d='M19 10v2a7 7 0 0 1-14 0v-2'/><line x1='12' x2='12' y1='19' y2='22'/>",
+          "mic-off": "<line x1='2' x2='22' y1='2' y2='22'/><path d='M18.89 13.23A7.12 7.12 0 0 0 19 12v-2'/><path d='M5 10v2a7 7 0 0 0 12 5'/><path d='M15 9.34V5a3 3 0 0 0-5.68-1.33'/><path d='M9 9v3a3 3 0 0 0 5.12 2.12'/><line x1='12' x2='12' y1='19' y2='22'/>",
           "moon": "<path d='M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'/>",
           "more": "<circle cx='12' cy='12' r='1'/><circle cx='19' cy='12' r='1'/><circle cx='5' cy='12' r='1'/>",
           "mouse": "<rect x='5' y='2' width='14' height='20' rx='7'/><path d='M12 6v4'/>",

@@ -250,7 +250,7 @@ in
         Mod+Shift+9 { move-column-to-workspace 9; }
 
         // Media
-        XF86AudioRaiseVolume { spawn "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+        XF86AudioRaiseVolume { spawn "${pkgs.wireplumber}/bin/wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "5%+"; }
         XF86AudioLowerVolume { spawn "${pkgs.wireplumber}/bin/wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
         XF86AudioMute { spawn "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
         XF86AudioMicMute { spawn "${pkgs.wireplumber}/bin/wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
@@ -265,8 +265,8 @@ in
         ${
           if isLaptop then
             ''
-              XF86MonBrightnessUp   { spawn "${pkgs.brightnessctl}/bin/brightnessctl" "set" "+5%"; }
-              XF86MonBrightnessDown { spawn "${pkgs.brightnessctl}/bin/brightnessctl" "set" "5%-"; }
+              XF86MonBrightnessUp   { spawn "sh" "-c" "${pkgs.brightnessctl}/bin/brightnessctl set +5% && ${pkgs.quickshell}/bin/quickshell ipc call osd brightness"; }
+              XF86MonBrightnessDown { spawn "sh" "-c" "${pkgs.brightnessctl}/bin/brightnessctl set 5%- && ${pkgs.quickshell}/bin/quickshell ipc call osd brightness"; }
             ''
           else
             ""

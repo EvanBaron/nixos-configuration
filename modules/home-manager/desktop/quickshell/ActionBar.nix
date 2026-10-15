@@ -181,7 +181,7 @@
                   accessibleName: "Volume " + bar.volumePercentage + " percent" + (bar.volumeMuted ? ", muted" : "")
                   active: bar.controlCenterOpen
                   onClicked: bar.toggleControlCenter()
-                  onScrolled: (steps) => bar.run(["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_SINK@", (steps > 0 ? "5%+" : "5%-")])
+                  onScrolled: (steps) => bar.run(["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", (steps > 0 ? "5%+" : "5%-")])
               }
               TrayPill {
                   iconName: Notifications.dnd ? "bell-off" : "bell"

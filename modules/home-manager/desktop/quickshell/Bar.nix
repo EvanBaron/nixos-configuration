@@ -139,10 +139,39 @@
       IpcHandler { target: "stats"; function toggle(): void { root.only("statistics") } }
 
       // Volume is pushed by PipeWire; battery is read from sysfs (no polling processes).
-      PwObjectTracker { objects: [ Pipewire.defaultAudioSink ] }
+      PwObjectTracker { objects: [ Pipewire.defaultAudioSink, Pipewire.defaultAudioSource ] }
       readonly property var _sinkAudio: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
       Binding { target: root; property: "volumePercentage"; value: root._sinkAudio ? Math.round(root._sinkAudio.volume * 100) : 0; when: root._sinkAudio !== null }
       Binding { target: root; property: "volumeMuted"; value: root._sinkAudio ? root._sinkAudio.muted : false; when: root._sinkAudio !== null }
+
+      // OSD: volume and mic changes come from PipeWire; brightness from `quickshell ipc call osd brightness`
+      // (run by the niri brightness binds). Changes in the first second after startup are ignored.
+      Osd { id: osd; screen: Quickshell.screens[0] }
+      property bool _osdReady: false
+      Timer { interval: 1000; running: true; onTriggered: root._osdReady = true }
+      readonly property var _sourceAudio: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource.audio : null
+      Connections {
+          target: root._sinkAudio
+          function onVolumesChanged() { if (root._osdReady) osd.show("volume", root._sinkAudio.volume, root._sinkAudio.muted) }
+          function onMutedChanged()   { if (root._osdReady) osd.show("volume", root._sinkAudio.volume, root._sinkAudio.muted) }
+      }
+      Connections {
+          target: root._sourceAudio
+          function onMutedChanged() { if (root._osdReady) osd.show("mic", 0, root._sourceAudio.muted) }
+      }
+      Process {
+          id: brightnessQuery
+          // e.g. "intel_backlight,backlight,12000,40%,30000"
+          command: ["brightnessctl", "-m"]
+          stdout: SplitParser {
+              onRead: data => {
+                  var f = data.split(",")
+                  var cur = parseInt(f[2]), max = parseInt(f[4])
+                  if (max > 0) osd.show("brightness", cur / max, false)
+              }
+          }
+      }
+      IpcHandler { target: "osd"; function brightness(): void { brightnessQuery.running = true } }
 
       // Network speed and fast sampling are only needed while the statistics popup is open.
       Binding { target: SystemStats; property: "detailed"; value: root.statisticsVisible }

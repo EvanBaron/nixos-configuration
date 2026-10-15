@@ -41,6 +41,7 @@ let
       inherit pkgs;
       inherit (config.theme) wallpaper;
     };
+    "Osd.qml" = import ./Osd.nix { };
     "Bar.qml" = import ./Bar.nix { };
     "ActionBar.qml" = import ./ActionBar.nix { };
     "AppLauncher.qml" = import ./AppLauncher.nix { };
@@ -79,6 +80,7 @@ let
     singleton DeskAudio 1.0 DeskAudio.qml
     singleton NowPlaying 1.0 NowPlaying.qml
     Desk 1.0 Desk.qml
+    Osd 1.0 Osd.qml
     Bar 1.0 Bar.qml
     ActionBar 1.0 ActionBar.qml
     AppLauncher 1.0 AppLauncher.qml
