@@ -21,7 +21,6 @@ let
     "FocusRing.qml" = import ./FocusRing.nix { };
     "PopupSurface.qml" = import ./PopupSurface.nix { };
     "SegmentedControl.qml" = import ./SegmentedControl.nix { };
-    "MediaCard.qml" = import ./MediaCard.nix { };
     "Sparkline.qml" = import ./Sparkline.nix { };
     "AppIcons.qml" = import ./AppIcons.nix { inherit (config.gtk) iconTheme; };
     "AppIcon.qml" = import ./AppIcon.nix { };
@@ -64,7 +63,6 @@ let
     FocusRing 1.0 FocusRing.qml
     PopupSurface 1.0 PopupSurface.qml
     SegmentedControl 1.0 SegmentedControl.qml
-    MediaCard 1.0 MediaCard.qml
     Sparkline 1.0 Sparkline.qml
     singleton AppIcons 1.0 AppIcons.qml
     AppIcon 1.0 AppIcon.qml

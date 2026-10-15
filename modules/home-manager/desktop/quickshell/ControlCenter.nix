@@ -6,7 +6,6 @@
   import Quickshell.Io
   import Quickshell.Bluetooth
   import Quickshell.Networking
-  import Quickshell.Services.Mpris
   import Quickshell.Services.UPower
   import QtQuick
   import QtQuick.Layouts
@@ -94,14 +93,6 @@
           }
       }
       Timer { interval: 5000; running: controlCenter.open; repeat: true; triggeredOnStart: true; onTriggered: brightGet.running = true }
-
-      // ── Media: prefer a player that has a track ──
-      readonly property var player: {
-          var v = Mpris.players.values
-          for (var i = 0; i < v.length; i++) if (v[i].isPlaying) return v[i]
-          for (var j = 0; j < v.length; j++) if (v[j].trackTitle) return v[j]
-          return v.length > 0 ? v[0] : null
-      }
 
       readonly property var profileKeys: ["saver", "balanced", "performance"]
       readonly property var profileEnums: [PowerProfile.PowerSaver, PowerProfile.Balanced, PowerProfile.Performance]
@@ -307,13 +298,6 @@
                                   color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12; font.features: { "tnum": 1 }
                               }
                           }
-                      }
-
-                      MediaCard {
-                          Layout.fillWidth: true
-                          Layout.topMargin: hasPlayer ? 0 : -Style.space16
-                          player: controlCenter.player
-                          live: controlCenter.open
                       }
                   }
               }

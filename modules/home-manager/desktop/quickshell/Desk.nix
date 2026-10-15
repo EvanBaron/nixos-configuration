@@ -14,8 +14,8 @@ in
 
   // The empty-workspace scene, one per monitor, on the Bottom layer (above swaybg,
   // below every window): the wallpaper redrawn through an audio-reactive shader, a
-  // drifting particle field, a now-playing poster and synced lyrics. Only the poster
-  // takes clicks.
+  // drifting particle field, a now-playing poster with media controls and synced lyrics.
+  // Only the poster and the progress line take clicks.
   PanelWindow {
       id: desk
 
@@ -36,7 +36,10 @@ in
       WlrLayershell.layer: WlrLayer.Bottom
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
       WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-      mask: Region { item: NowPlaying.hasTrack ? poster : null }
+      mask: Region {
+          item: NowPlaying.hasTrack ? poster : null
+          Region { item: NowPlaying.canSeek ? seekArea : null }
+      }
 
       Item {
           id: scene
@@ -274,31 +277,102 @@ in
                           font.family: Style.fontFamily; font.pixelSize: 18; font.weight: Font.Medium
                           width: Math.min(implicitWidth, desk.width * 0.5); elide: Text.ElideRight
                       }
-                      Text {
-                          function fmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") }
-                          text: NowPlaying.length > 0 ? fmt(NowPlaying.position) + " / " + fmt(NowPlaying.length) : ""
-                          color: Colors.fgMuted
-                          font.family: Style.fontFamily; font.pixelSize: 12
-                          font.features: { "tnum": 1 }
+                      // Media controls (they replace the control center's media card).
+                      Row {
+                          topPadding: Style.space8
+                          spacing: Style.space8
+                          Repeater {
+                              model: [
+                                  { icon: "skip-back", primary: false, act: "prev", name: "Previous" },
+                                  { icon: NowPlaying.playing ? "pause" : "play", primary: true, act: "toggle", name: NowPlaying.playing ? "Pause" : "Play" },
+                                  { icon: "skip-forward", primary: false, act: "next", name: "Next" }
+                              ]
+                              Item {
+                                  required property var modelData
+                                  readonly property bool enabled_: modelData.act === "prev" ? NowPlaying.canPrevious
+                                                                 : modelData.act === "next" ? NowPlaying.canNext : true
+                                  anchors.verticalCenter: parent.verticalCenter
+                                  width: modelData.primary ? 44 : 36
+                                  height: width
+                                  opacity: enabled_ ? 1 : Style.opacityDisabled
+                                  Accessible.role: Accessible.Button
+                                  Accessible.name: modelData.name
+                                  Rectangle {
+                                      anchors.fill: parent; radius: width / 2
+                                      color: parent.modelData.primary ? Colors.accent
+                                           : Qt.rgba(Colors.bg.r, Colors.bg.g, Colors.bg.b, Style.opacitySurface)
+                                      border.width: parent.modelData.primary ? 0 : 1
+                                      border.color: mediaBtn.containsMouse ? Colors.borderStrong : Colors.border
+                                      scale: mediaBtn.pressed ? 0.92 : 1
+                                      Behavior on scale { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                      Behavior on border.color { ColorAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                  }
+                                  // Hover on the accent fill: black at 12%.
+                                  Rectangle {
+                                      anchors.fill: parent; radius: width / 2
+                                      visible: parent.modelData.primary
+                                      color: "black"
+                                      opacity: mediaBtn.containsMouse ? 0.12 : 0
+                                      Behavior on opacity { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                  }
+                                  Icon {
+                                      anchors.centerIn: parent
+                                      name: parent.modelData.icon
+                                      size: parent.modelData.primary ? 18 : 16
+                                      color: parent.modelData.primary ? Colors.onAccent : Colors.fg
+                                      animated: false
+                                  }
+                                  MouseArea {
+                                      id: mediaBtn
+                                      anchors.fill: parent
+                                      enabled: parent.enabled_
+                                      hoverEnabled: true
+                                      cursorShape: Qt.PointingHandCursor
+                                      onClicked: {
+                                          var a = parent.modelData.act
+                                          if (a === "prev") NowPlaying.previous()
+                                          else if (a === "next") NowPlaying.next()
+                                          else NowPlaying.togglePlaying()
+                                      }
+                                  }
+                              }
+                          }
+                          Text {
+                              function fmt(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0") }
+                              anchors.verticalCenter: parent.verticalCenter
+                              leftPadding: Style.space8
+                              text: NowPlaying.length > 0 ? fmt(NowPlaying.position) + " / " + fmt(NowPlaying.length) : ""
+                              color: Colors.fgAlt
+                              font.family: Style.fontFamily; font.pixelSize: 12
+                              font.features: { "tnum": 1 }
+                          }
                       }
                   }
               }
-
-              MouseArea {
-                  anchors.fill: parent
-                  cursorShape: Qt.PointingHandCursor
-                  onClicked: NowPlaying.togglePlaying()
-              }
           }
 
-          // Progress line along the bottom; brightens on each beat.
+          // Progress line along the bottom; brightens on each beat. Click or drag to seek;
+          // it thickens to 4px under the pointer.
+          MouseArea {
+              id: seekArea
+              visible: NowPlaying.canSeek
+              x: 48; width: parent.width - 96
+              y: parent.height - 32 - 8; height: 18
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
+              onPressed: mouse => NowPlaying.seek(mouse.x / width)
+              onPositionChanged: mouse => { if (pressed) NowPlaying.seek(mouse.x / width) }
+          }
           Rectangle {
               visible: NowPlaying.hasTrack && NowPlaying.length > 0
               x: 48; width: parent.width - 96
-              y: parent.height - 32; height: 2; radius: 1
+              height: seekArea.containsMouse ? 4 : 2
+              y: parent.height - 32 - height / 2 + 1
+              radius: height / 2
+              Behavior on height { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
               color: Qt.rgba(Colors.highlight.r, Colors.highlight.g, Colors.highlight.b, 0.8)
               Rectangle {
-                  height: parent.height; radius: 1
+                  height: parent.height; radius: parent.radius
                   width: parent.width * Math.min(1, NowPlaying.position / Math.max(1, NowPlaying.length))
                   color: Colors.accent
                   opacity: 0.7 + 0.3 * (desk.motion ? DeskAudio.beat : 0)

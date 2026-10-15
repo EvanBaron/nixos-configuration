@@ -37,7 +37,18 @@
           return idx
       }
 
+      readonly property bool canPrevious: hasTrack && player.canGoPrevious
+      readonly property bool canNext: hasTrack && player.canGoNext
+      readonly property bool canSeek: hasTrack && player.canSeek && length > 0
+
       function togglePlaying() { if (player && player.canTogglePlaying) player.togglePlaying() }
+      function previous() { if (canPrevious) player.previous() }
+      function next() { if (canNext) player.next() }
+      function seek(fraction) {
+          if (!canSeek) return
+          player.position = Math.max(0, Math.min(1, fraction)) * length
+          position = player.position
+      }
 
       Timer {
           interval: 250; repeat: true
