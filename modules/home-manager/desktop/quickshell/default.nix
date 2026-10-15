@@ -35,6 +35,12 @@ let
     "NotificationToasts.qml" = import ./NotificationToasts.nix { };
     "NotificationCenter.qml" = import ./NotificationCenter.nix { };
     "PowerMenu.qml" = import ./PowerMenu.nix { inherit pkgs; };
+    "DeskAudio.qml" = import ./DeskAudio.nix { inherit pkgs; };
+    "NowPlaying.qml" = import ./NowPlaying.nix { };
+    "Desk.qml" = import ./Desk.nix {
+      inherit pkgs;
+      inherit (config.theme) wallpaper;
+    };
     "Bar.qml" = import ./Bar.nix { };
     "ActionBar.qml" = import ./ActionBar.nix { };
     "AppLauncher.qml" = import ./AppLauncher.nix { };
@@ -70,6 +76,9 @@ let
     NotificationToasts 1.0 NotificationToasts.qml
     NotificationCenter 1.0 NotificationCenter.qml
     PowerMenu 1.0 PowerMenu.qml
+    singleton DeskAudio 1.0 DeskAudio.qml
+    singleton NowPlaying 1.0 NowPlaying.qml
+    Desk 1.0 Desk.qml
     Bar 1.0 Bar.qml
     ActionBar 1.0 ActionBar.qml
     AppLauncher 1.0 AppLauncher.qml

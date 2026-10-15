@@ -226,6 +226,28 @@
           root.workspaceData = a
       }
 
+      // True when the given monitor's active workspace has no windows.
+      function desktopEmpty(output) {
+          for (var i = 0; i < root.workspaceData.length; i++) {
+              var w = root.workspaceData[i]
+              if (w.output === output && w.active) return !w.occupied
+          }
+          return false
+      }
+
+      Variants {
+          model: Quickshell.screens
+          Desk {
+              required property var modelData
+              screen: modelData
+              desktopEmpty: root.desktopEmpty(modelData.name)
+          }
+      }
+      // cava, position polling and lyrics run only while some monitor shows its desk.
+      readonly property bool anyDesktopEmpty: root.workspaceData.some(w => w.active && !w.occupied)
+      Binding { target: DeskAudio; property: "wanted"; value: root.anyDesktopEmpty }
+      Binding { target: NowPlaying; property: "active"; value: root.anyDesktopEmpty }
+
       Variants {
           model: Quickshell.screens
           ActionBar {
