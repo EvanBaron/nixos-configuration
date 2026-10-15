@@ -27,6 +27,9 @@
 
   security.polkit.enable = true;
 
+  # PAM service for the Quickshell lock screen (PamContext config "quickshell").
+  security.pam.services.quickshell = { };
+
   # Give sleep inhibitors (swayidle's before-sleep hook, see
   # desktop/niri.nix) more headroom before logind suspends anyway.
   # Default is 5s, which a network mount teardown could brush up against.

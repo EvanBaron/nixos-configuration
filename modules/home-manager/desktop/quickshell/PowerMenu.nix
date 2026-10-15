@@ -11,7 +11,7 @@
   import "."
 
   // Opened by the power key or the bar's power pill. Five tiles; every action runs immediately,
-  // after the menu's exit animation so it never lingers on screen (e.g. under swaylock).
+  // after the menu's exit animation so it never lingers on screen (e.g. under the lock screen).
   PanelWindow {
       id: menu
 
@@ -41,7 +41,7 @@
       }
 
       readonly property var actions: [
-          { key: "lock",     label: "Lock",      icon: "lock",       cmd: ["${pkgs.swaylock-effects}/bin/swaylock", "-fF"] },
+          { key: "lock",     label: "Lock",      icon: "lock",       cmd: ["${pkgs.quickshell}/bin/quickshell", "ipc", "call", "lock", "lock"] },
           { key: "sleep",    label: "Sleep",     icon: "moon",       cmd: ["systemctl", "suspend"] },
           { key: "logout",   label: "Log out",   icon: "log-out",    cmd: ["${pkgs.niri}/bin/niri", "msg", "action", "quit", "--skip-confirmation"] },
           { key: "reboot",   label: "Reboot",    icon: "rotate-ccw", cmd: ["systemctl", "reboot"] },

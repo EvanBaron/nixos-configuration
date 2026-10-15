@@ -147,6 +147,7 @@
       // OSD: volume and mic changes come from PipeWire; brightness from `quickshell ipc call osd brightness`
       // (run by the niri brightness binds). Changes in the first second after startup are ignored.
       Osd { id: osd; screen: Quickshell.screens[0] }
+      LockScreen {}
       property bool _osdReady: false
       Timer { interval: 1000; running: true; onTriggered: root._osdReady = true }
       readonly property var _sourceAudio: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource.audio : null

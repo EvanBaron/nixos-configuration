@@ -42,6 +42,7 @@ let
       inherit (config.theme) wallpaper;
     };
     "Osd.qml" = import ./Osd.nix { };
+    "LockScreen.qml" = import ./LockScreen.nix { inherit (config.theme) wallpaper; };
     "Bar.qml" = import ./Bar.nix { };
     "ActionBar.qml" = import ./ActionBar.nix { };
     "AppLauncher.qml" = import ./AppLauncher.nix { };
@@ -81,6 +82,7 @@ let
     singleton NowPlaying 1.0 NowPlaying.qml
     Desk 1.0 Desk.qml
     Osd 1.0 Osd.qml
+    LockScreen 1.0 LockScreen.qml
     Bar 1.0 Bar.qml
     ActionBar 1.0 ActionBar.qml
     AppLauncher 1.0 AppLauncher.qml

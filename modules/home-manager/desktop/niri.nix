@@ -20,6 +20,19 @@ let
     _JAVA_AWT_WM_NONREPARENTING = "1";
   };
 
+  # Quickshell's lock screen, waiting until niri confirms the lock (so suspend never
+  # shows the desktop); swaylock if Quickshell isn't running or doesn't lock in time.
+  lockSession = pkgs.writeShellScript "lock-session" ''
+    qs=${pkgs.quickshell}/bin/quickshell
+    if $qs ipc call lock lock 2>/dev/null; then
+      for _ in $(seq 30); do
+        [ "$($qs ipc call lock isLocked 2>/dev/null)" = "true" ] && exit 0
+        sleep 0.1
+      done
+    fi
+    exec ${config.programs.swaylock.package}/bin/swaylock -fF
+  '';
+
   envToKdl =
     attrs: lib.concatStringsSep "\n        " (lib.mapAttrsToList (k: v: ''${k} "${v}"'') attrs);
 in
@@ -47,10 +60,10 @@ in
     events = {
       before-sleep = "${pkgs.writeShellScript "before-sleep" ''
         ${config.desktop.sleepHooks.beforeSleep}
-        ${pkgs.swaylock-effects}/bin/swaylock -fF
+        ${lockSession}
       ''}";
       after-resume = "${pkgs.writeShellScript "after-resume" config.desktop.sleepHooks.afterResume}";
-      lock = "${pkgs.swaylock-effects}/bin/swaylock -fF";
+      lock = "${lockSession}";
     };
     timeouts = [
       {
@@ -194,7 +207,9 @@ in
         Mod+Shift+Q { close-window; }
         Mod+F { maximize-column; }
         Mod+Shift+F { fullscreen-window; }
-        Mod+Shift+L { spawn "${pkgs.swaylock-effects}/bin/swaylock" "-fF"; }
+        Mod+Shift+L { spawn "${lockSession}"; }
+        // Fallback lock; works while locked, e.g. if Quickshell died and left the session locked.
+        Mod+Ctrl+Shift+L allow-when-locked=true { spawn "${config.programs.swaylock.package}/bin/swaylock" "-fF"; }
         XF86PowerOff { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "power" "toggle"; }
         Mod+Shift+E { quit; }
         Mod+V { toggle-window-floating; }
