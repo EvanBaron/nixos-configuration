@@ -55,6 +55,12 @@
 
     nixpkgs.config.allowUnfree = true;
 
+    # Home Manager uses the system's nixpkgs (one evaluation, one allowUnfree) and
+    # installs user packages through users.users.<name>.packages.
+    home-manager.useGlobalPkgs = true;
+    home-manager.useUserPackages = true;
+    home-manager.backupFileExtension = "backup";
+
     nix.settings.experimental-features = [
       "nix-command"
       "flakes"

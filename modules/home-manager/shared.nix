@@ -52,7 +52,6 @@
   };
 
   config = {
-    nixpkgs.config.allowUnfree = true;
     colorScheme = {
       inherit (themeData) name slug palette;
     };

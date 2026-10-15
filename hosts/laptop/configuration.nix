@@ -25,5 +25,4 @@
   home-manager.users = {
     "${config.user.username}" = import ./home.nix;
   };
-  home-manager.backupFileExtension = "backup";
 }
