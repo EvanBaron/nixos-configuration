@@ -5,9 +5,9 @@ let
   androidComposition = pkgs.androidenv.composeAndroidPackages {
     platformVersions = [ "35" "36" ];
     includeEmulator = true;
-    includeSystemImages = true;
-    systemImageTypes = [ "google_apis" "google_apis_playstore" ];
-    abiVersions = [ "x86_64" "arm64-v8a" ];
+    # AVDs use the images Android Studio downloads into ~/Android/Sdk
+    # (ANDROID_HOME); the Nix ones went unused and cost ~25 GiB per generation.
+    includeSystemImages = false;
     includeSources = false;
   };
 

@@ -60,6 +60,8 @@
       "nix-command"
       "flakes"
     ];
+    # Hardlink identical files in the store.
+    nix.settings.auto-optimise-store = true;
 
     # Automatic Nix garbage collection
     nix.gc = {
