@@ -135,6 +135,18 @@ in
         }
     }
 
+    ${
+      if isLaptop then
+        ''
+          // Keep niri off the NVIDIA dGPU (PRIME offload; the Intel iGPU drives
+          // every output) so the dGPU can runtime-suspend.
+          debug {
+              ignore-drm-device "/dev/dri/by-path/pci-0000:01:00.0-render"
+          }
+        ''
+      else
+        ""
+    }
     output "DP-1" {
         mode "2560x1440@144.000"
         scale 1.0
