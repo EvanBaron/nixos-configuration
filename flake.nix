@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # Last revision where zotero still builds (on Firefox ESR 140); see
+    # modules/home-manager/zotero.nix.
+    nixpkgs-zotero.url = "github:nixos/nixpkgs/e158d9ed9b51c98974c5e66e1ba1c9e0255fecaa";
+
     nixvim = {
       url = "github:nix-community/nixvim";
     };

@@ -18,6 +18,7 @@
     inputs.private.homeModules.default
     ./theme.nix
     ./git.nix
+    ./zotero.nix
     ./sops.nix
     ./zed.nix
     ./clangd.nix
@@ -61,7 +62,6 @@
       nil
       docker-compose
       thunderbird
-
     ];
 
     home.sessionVariables = {
