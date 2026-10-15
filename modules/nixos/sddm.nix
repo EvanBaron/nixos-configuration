@@ -19,6 +19,14 @@ in
     enable = true;
 
     theme = "default";
+
+    # SilentSDDM now defaults to kwin, which applies its own HiDPI scaling
+    # on top of `scale` below; weston doesn't, so keep the old look.
+    wayland = {
+      enable = true;
+      compositor = "weston";
+    };
+
     backgrounds = {
       wall = wallpaper;
     };
