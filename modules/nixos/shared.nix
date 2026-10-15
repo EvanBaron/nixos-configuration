@@ -19,7 +19,6 @@
     ./c.nix
     ./thunar.nix
     ./audio.nix
-    ./mem-watch.nix
     ./krb5.nix
     ./network-displays.nix
   ];
