@@ -1,5 +1,11 @@
 { config, ... }:
 
+let
+  p = config.colorScheme.palette;
+  inherit (config.theme) ui;
+  hex = c: if builtins.substring 0 1 c == "#" then c else "#${c}";
+in
+
 {
   programs.wofi = {
     enable = true;
@@ -21,47 +27,67 @@
       image_size = 24;
       gtk_dark = true;
     };
+    # Matches the Quickshell launcher: surface radius 14, search field radius 10, rows radius 10.
     style = ''
+      * {
+        font-family: "Fira Sans", sans-serif;
+        font-size: 15px;
+      }
+
       window {
         margin: 0px;
-        border: 2px solid #${config.colorScheme.palette.base06};
-        background-color: #${config.colorScheme.palette.base00};
-        font-family: "Fira Code Nerd Font";
-        font-size: 14px;
-      }
-
-      #input {
-        margin: 5px;
-        border: none;
-        color: #${config.colorScheme.palette.base05};
-        background-color: #${config.colorScheme.palette.base02};
-      }
-
-      #inner-box {
-        margin: 5px;
-        border: none;
-        background-color: transparent;
+        border: 1px solid ${hex p.base02};
+        border-radius: 14px;
+        background-color: alpha(${hex p.base00}, 0.96);
       }
 
       #outer-box {
-        margin: 5px;
+        margin: 12px;
         border: none;
         background-color: transparent;
       }
 
-      #scroll {
-        margin: 0px;
-        border: none;
+      #input {
+        margin: 0 0 8px 0;
+        padding: 10px 12px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        color: ${hex p.base05};
+        background-color: ${hex p.base01};
+        box-shadow: none;
+        outline: none;
       }
 
-      #text {
-        margin: 5px;
+      #input:focus {
+        border-color: ${hex ui.accent};
+      }
+
+      #inner-box,
+      #scroll {
+        margin: 0;
         border: none;
-        color: #${config.colorScheme.palette.base05};
+        background-color: transparent;
+      }
+
+      #entry {
+        padding: 10px 12px;
+        border-radius: 10px;
+        transition: background-color 120ms cubic-bezier(0.33, 1, 0.68, 1);
       }
 
       #entry:selected {
-        background-color: #${config.colorScheme.palette.base02};
+        background-color: ${hex p.base02};
+        outline: none;
+      }
+
+      #text {
+        margin: 0 0 0 8px;
+        border: none;
+        color: ${hex p.base05};
+      }
+
+      #text:selected {
+        color: ${hex p.base05};
       }
     '';
   };
