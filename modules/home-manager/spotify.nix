@@ -36,6 +36,14 @@ in
       notification = config.colorScheme.palette.base06;
       notification-error = config.colorScheme.palette.base08;
       misc = config.colorScheme.palette.base00;
+      # Sleek derives main-elevated and highlight (search dropdown, menus, hover)
+      # from these; left undefined, those panels render transparent.
+      main-secondary = config.colorScheme.palette.base01;
+      button-secondary = config.colorScheme.palette.base04;
+      nav-active = config.colorScheme.palette.base02;
+      nav-active-text = config.colorScheme.palette.base05;
+      playback-bar = config.colorScheme.palette.base06;
+      play-button = config.colorScheme.palette.base06;
     };
   };
 }
