@@ -4,41 +4,62 @@
   import Quickshell.Services.SystemTray
   import Quickshell.Widgets
   import QtQuick
-  import QtQuick.Layouts
   import "."
 
+  // StatusNotifier icons for the bar: 16px icons in 22px hover chips, 4px apart.
+  // Left click activates (or opens the menu of menu-only items), right click opens the menu.
   Row {
       id: trayRoot
-      spacing: 8
-      height: 20
-      anchors.verticalCenter: parent.verticalCenter
+      // The bar window, used to place item menus.
+      property var parentWindow: null
+      readonly property int itemCount: repeater.count
+
+      spacing: Style.space4
 
       Repeater {
+          id: repeater
           model: SystemTray.items
 
           Item {
               id: trayItem
               required property var modelData
-              width: 18; height: 18
-              anchors.verticalCenter: parent.verticalCenter
+              width: 22; height: 22
+
+              Rectangle {
+                  anchors.fill: parent
+                  radius: Style.radiusSm
+                  color: Colors.bgAlt
+                  opacity: ma.containsMouse ? 1 : 0
+                  Behavior on opacity { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+              }
 
               IconImage {
-                  anchors.fill: parent
+                  anchors.centerIn: parent
+                  implicitSize: 16
                   source: trayItem.modelData.icon || ""
-                  smooth: true
+              }
+
+              function openMenu() {
+                  if (!trayItem.modelData.hasMenu || !trayRoot.parentWindow) return
+                  var p = trayItem.mapToItem(null, 0, trayItem.height + Style.space6)
+                  trayItem.modelData.display(trayRoot.parentWindow, Math.round(p.x), Math.round(p.y))
               }
 
               MouseArea {
+                  id: ma
                   anchors.fill: parent
-                  acceptedButtons: Qt.LeftButton | Qt.RightButton
+                  hoverEnabled: true
+                  acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
                   cursorShape: Qt.PointingHandCursor
                   onClicked: (mouse) => {
-                      if (mouse.button === Qt.LeftButton) {
-                          trayItem.modelData.activate();
-                      } else if (mouse.button === Qt.RightButton) {
-                          trayItem.modelData.contextMenu();
-                      }
+                      if (mouse.button === Qt.RightButton || (mouse.button === Qt.LeftButton && trayItem.modelData.onlyMenu))
+                          trayItem.openMenu()
+                      else if (mouse.button === Qt.LeftButton)
+                          trayItem.modelData.activate()
+                      else
+                          trayItem.modelData.secondaryActivate()
                   }
+                  onWheel: (wheel) => trayItem.modelData.scroll(wheel.angleDelta.y, false)
               }
 
               // Tooltip: fades in and rises 4px after a 400ms hover; hides at once.
@@ -59,8 +80,6 @@
                   ]
                   Text { id: lbl; anchors.centerIn: parent; text: trayItem.modelData.tooltipTitle || ""; color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12 }
               }
-
-              MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; propagateComposedEvents: true }
           }
       }
   }

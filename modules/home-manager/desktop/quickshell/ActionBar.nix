@@ -16,6 +16,7 @@
       property bool volumeMuted:         false
       property int  batteryPercentage:   0
       property bool batteryCharging:     false
+      property bool hasBattery:          false
       property var  workspaceData:       []
       property bool calendarOpen:        false
       property bool statisticsOpen:      false
@@ -171,6 +172,7 @@
                           : "battery"
                   valueText: bar.batteryPercentage + "%"
                   tone: bar.batteryTone
+                  visible: bar.hasBattery
                   accessibleName: "Battery " + bar.batteryPercentage + " percent" + (bar.batteryCharging ? ", charging" : "")
                   active: bar.controlCenterOpen
                   onClicked: bar.toggleControlCenter()
@@ -182,6 +184,25 @@
                   active: bar.controlCenterOpen
                   onClicked: bar.toggleControlCenter()
                   onScrolled: (steps) => bar.run(["wpctl", "set-volume", "-l", "1.0", "@DEFAULT_AUDIO_SINK@", (steps > 0 ? "5%+" : "5%-")])
+              }
+              // System tray between two hairlines; collapses with no items.
+              Rectangle {
+                  visible: tray.itemCount > 0
+                  anchors.verticalCenter: parent.verticalCenter
+                  width: 1 + 2 * Style.space4; height: 14; color: "transparent"
+                  Rectangle { anchors.centerIn: parent; width: 1; height: parent.height; color: Colors.border }
+              }
+              SystemTray {
+                  id: tray
+                  parentWindow: bar
+                  visible: itemCount > 0
+                  anchors.verticalCenter: parent.verticalCenter
+              }
+              Rectangle {
+                  visible: tray.itemCount > 0
+                  anchors.verticalCenter: parent.verticalCenter
+                  width: 1 + 2 * Style.space4; height: 14; color: "transparent"
+                  Rectangle { anchors.centerIn: parent; width: 1; height: parent.height; color: Colors.border }
               }
               TrayPill {
                   iconName: Notifications.dnd ? "bell-off" : "bell"

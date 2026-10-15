@@ -288,6 +288,7 @@
               volumeMuted:         root.volumeMuted
               batteryPercentage:   root.batteryPercentage
               batteryCharging:     root.batteryCharging
+              hasBattery:          root._batteryPath !== ""
               workspaceData:       root.workspaceData
               calendarOpen:        root.calendarVisible
               statisticsOpen:      root.statisticsVisible
