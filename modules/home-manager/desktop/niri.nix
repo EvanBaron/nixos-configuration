@@ -54,11 +54,8 @@ in
     };
     timeouts = [
       {
-        timeout = 300;
-        command = "${pkgs.swaylock-effects}/bin/swaylock -fF";
-      }
-      {
-        timeout = 600;
+        # Long enough to read a document without touching anything.
+        timeout = 3600;
         command = "${pkgs.niri}/bin/niri msg action power-off-monitors";
       }
     ];
