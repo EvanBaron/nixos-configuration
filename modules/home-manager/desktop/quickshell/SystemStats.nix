@@ -15,6 +15,11 @@
       property real receiveKilobytes:    0
       property real transmitKilobytes:    0
 
+      // Set while the statistics popup is open: sample faster and track network speed.
+      // Otherwise only the bar's CPU/RAM readouts and the popup's 2 s history need data.
+      property bool detailed: false
+      onDetailedChanged: if (!detailed) { _netPrevRx = 0; _netPrevTx = 0; _netPrevTs = 0 }
+
       property int  _cpuPrevIdle:  0
       property int  _cpuPrevTotal: 0
       property real _netPrevRx:    0
@@ -43,7 +48,7 @@
           }
       }
       property var _cpuTimer: Timer {
-          interval: 500; running: true; repeat: true
+          interval: root.detailed ? 1000 : 2000; running: true; repeat: true
           onTriggered: cpuFileView.reload()
       }
 
@@ -79,7 +84,7 @@
           }
       }
       property var _netTimer: Timer {
-          interval: 500; running: true; repeat: true
+          interval: 1000; running: root.detailed; repeat: true; triggeredOnStart: true
           onTriggered: netFileView.reload()
       }
 
@@ -102,29 +107,34 @@
           }
       }
       property var _ramTimer: Timer {
-          interval: 800; running: true; repeat: true; triggeredOnStart: true
+          interval: root.detailed ? 1000 : 2000; running: true; repeat: true; triggeredOnStart: true
           onTriggered: ramFileView.reload()
       }
 
       // ── Temp ──────────────────────────────────────────────────────────
-      property var _temperatureProcess: Process {
-          id: temperatureProcess
+      // Locate the CPU sensor once (coretemp / k10temp, else the first thermal zone),
+      // then just re-read that file instead of spawning a shell every tick.
+      property string _temperaturePath: ""
+      property var _temperatureLocator: Process {
           command: ["sh", "-c",
-              "for f in /sys/class/hwmon/hwmon*/temp*_input; do [ -f \"$f\" ] && cat \"$f\" && exit; done; " +
-              "for f in /sys/class/thermal/thermal_zone*/temp; do [ -f \"$f\" ] && cat \"$f\" && exit; done; echo 0"]
-          stdout: SplitParser {
-              onRead: function(d) {
-                  var raw = parseFloat(d.trim())
-                  if (isNaN(raw) || raw <= 0) return
-                  var t = raw > 1000 ? raw / 1000.0 : raw
-                  if (t > 0 && t < 150) root.cpuTemperature = Math.round(t)
-              }
-          }
+              "for h in /sys/class/hwmon/hwmon*; do case \"$(cat $h/name 2>/dev/null)\" in coretemp|k10temp|zenpower) echo $h/temp1_input; exit;; esac; done; " +
+              "for f in /sys/class/thermal/thermal_zone*/temp; do [ -f \"$f\" ] && echo \"$f\" && exit; done"]
+          stdout: SplitParser { onRead: function(d) { root._temperaturePath = d.trim() } }
           Component.onCompleted: running = true
       }
+      property var _temperatureFileView: FileView {
+          id: temperatureFileView
+          path: root._temperaturePath
+          onTextChanged: {
+              var raw = parseFloat(text().trim())
+              if (isNaN(raw) || raw <= 0) return
+              var t = raw > 1000 ? raw / 1000.0 : raw
+              if (t > 0 && t < 150) root.cpuTemperature = Math.round(t)
+          }
+      }
       property var _tempTimer: Timer {
-          interval: 1000; running: true; repeat: true
-          onTriggered: { temperatureProcess.running = false; temperatureProcess.running = true }
+          interval: 2000; running: root._temperaturePath !== ""; repeat: true
+          onTriggered: temperatureFileView.reload()
       }
 
       function formatNetworkSpeed(kilobytes) {

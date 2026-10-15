@@ -8,6 +8,8 @@
       files,
       qmldir,
       main ? "shell.qml",
+      # Quickshell pragmas for the root file, e.g. "Env NAME=value" (written as `//@ pragma …`).
+      pragmas ? [ ],
     }:
     pkgs.runCommand name { } ''
       mkdir -p $out
@@ -24,6 +26,7 @@
       EOF
 
       cat <<'EOF' > $out/${main}
+      ${builtins.concatStringsSep "\n" (map (p: "//@ pragma ${p}") pragmas)}
       import "."
       Bar {}
       EOF

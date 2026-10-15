@@ -9,238 +9,255 @@
   PanelWindow {
       id: calendar
 
-      anchors.top:   true
-      anchors.left:  true
-      anchors.right: false
+      property bool open: false
+      signal closeRequested()
 
-      implicitWidth:  340
-      implicitHeight: 460
+      anchors.top:  true
+      anchors.left: true
+      implicitWidth:  320
+      implicitHeight: mainCol.implicitHeight + Style.space12 * 2
       color: "transparent"
-      visible: false
+      visible: surface.shown
 
       WlrLayershell.namespace:     "calendar-popup"
       WlrLayershell.layer:         WlrLayer.Overlay
-      WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+      WlrLayershell.keyboardFocus: open ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
       WlrLayershell.exclusionMode: ExclusionMode.Ignore
-      WlrLayershell.margins.top:   30
-      WlrLayershell.margins.left:  60
+      WlrLayershell.margins.top:   Style.popupTop
+      WlrLayershell.margins.left:  Style.space6
 
-      property int  viewYear:  0
-      property int  viewMonth: 0
+      readonly property var weekdays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+      readonly property var months: ["January", "February", "March", "April", "May", "June",
+                                     "July", "August", "September", "October", "November", "December"]
+      readonly property var dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
-      readonly property var days:    ["Mo","Tu","We","Th","Fr","Sa","Su"]
-      readonly property var months:  ["January","February","March","April","May","June",
-                                      "July","August","September","October","November","December"]
-      readonly property var dayNames:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+      property date today: new Date()
+      property int viewYear: today.getFullYear()
+      property int viewMonth: today.getMonth()   // 0-based
 
-      property string clockH:  "00"
-      property string clockM:  "00"
-      property string clockS:  "00"
-      property string dayName: ""
-      property string dateStr: ""
+      Timer { interval: 60000; running: calendar.open; repeat: true; onTriggered: calendar.today = new Date() }
 
-      Timer {
-          interval: 1000; running: true; repeat: true; triggeredOnStart: true
-          onTriggered: {
-              var now = new Date()
-              var h24 = now.getHours()
-              var h12 = h24 % 12; if (h12 === 0) h12 = 12
-              calendar.clockH  = h12.toString()
-              calendar.clockM  = ("0" + now.getMinutes()).slice(-2)
-              calendar.clockS  = ("0" + now.getSeconds()).slice(-2)
-              calendar.dayName = calendar.dayNames[now.getDay()]
-              var mo = calendar.months[now.getMonth()]
-              calendar.dateStr = mo + " " + now.getDate()
-              if (calendar.viewYear === 0) {
-                  calendar.viewYear  = now.getFullYear()
-                  calendar.viewMonth = now.getMonth() + 1
-              }
+      function isoWeek(d) {
+          var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+          var day = t.getUTCDay() || 7
+          t.setUTCDate(t.getUTCDate() + 4 - day)
+          var y0 = new Date(Date.UTC(t.getUTCFullYear(), 0, 1))
+          return Math.ceil(((t - y0) / 86400000 + 1) / 7)
+      }
+
+      // Month change: slide 12px out and fade (durExit, InCubic), swap, enter from the other side (durBase).
+      property int _dir: 1
+      function step(dir) {
+          if (monthAnim.running) return
+          _dir = dir
+          monthAnim.restart()
+      }
+      function applyStep() {
+          if (_dir === 0) { viewYear = today.getFullYear(); viewMonth = today.getMonth(); return }
+          var m = viewMonth + _dir
+          viewYear += Math.floor(m / 12)
+          viewMonth = ((m % 12) + 12) % 12
+      }
+      SequentialAnimation {
+          id: monthAnim
+          ParallelAnimation {
+              NumberAnimation { target: gridShift; property: "x"; to: calendar._dir >= 0 ? -12 : 12; duration: Style.durExit; easing.type: Style.easeIn }
+              NumberAnimation { target: days; property: "opacity"; to: 0; duration: Style.durExit; easing.type: Style.easeIn }
+          }
+          ScriptAction { script: { calendar.applyStep(); gridShift.x = calendar._dir >= 0 ? 12 : -12 } }
+          ParallelAnimation {
+              NumberAnimation { target: gridShift; property: "x"; to: 0; duration: Style.durBase; easing.type: Style.easeOut }
+              NumberAnimation { target: days; property: "opacity"; to: 1; duration: Style.durBase; easing.type: Style.easeOut }
           }
       }
 
-      function daysInMonth(y, m) { return new Date(y, m, 0).getDate() }
-      function firstWeekday(y, m) {
-          var d = new Date(y, m-1, 1).getDay()
-          return (d + 6) % 7
+      onOpenChanged: if (open) {
+          today = new Date()
+          viewYear = today.getFullYear()
+          viewMonth = today.getMonth()
+          keyRoot.forceActiveFocus()
       }
 
-      function prevMonth() {
-          if (calendar.viewMonth === 1) { calendar.viewMonth = 12; calendar.viewYear-- }
-          else calendar.viewMonth--
-      }
-      function nextMonth() {
-          if (calendar.viewMonth === 12) { calendar.viewMonth = 1; calendar.viewYear++ }
-          else calendar.viewMonth++
-      }
+      Shortcut { sequence: "Escape"; enabled: calendar.open; onActivated: calendar.closeRequested() }
 
-      onVisibleChanged: {
-          if (visible) {
-              var now = new Date()
-              viewYear  = now.getFullYear()
-              viewMonth = now.getMonth() + 1
+      component NavButton: Item {
+          id: nav
+          property string iconName: ""
+          property string text: ""
+          signal clicked()
+          implicitWidth: text !== "" ? navLabel.implicitWidth + 16 : 28
+          implicitHeight: 28
+          activeFocusOnTab: true
+          Accessible.role: Accessible.Button
+          Keys.onReturnPressed: nav.clicked()
+          Keys.onSpacePressed: nav.clicked()
+          Rectangle {
+              anchors.fill: parent; radius: Style.radiusSm
+              color: Colors.highlight
+              opacity: navMouse.containsMouse ? 1 : 0
+              Behavior on opacity { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
           }
+          Icon { anchors.centerIn: parent; visible: nav.text === ""; name: nav.iconName; size: 16; color: navMouse.containsMouse ? Colors.fg : Colors.fgAlt }
+          Text {
+              id: navLabel
+              anchors.centerIn: parent
+              visible: nav.text !== ""
+              text: nav.text
+              color: Colors.accent
+              font.family: Style.fontFamily; font.pixelSize: 12; font.weight: Font.Medium
+          }
+          FocusRing { targetRadius: Style.radiusSm }
+          MouseArea { id: navMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: nav.clicked() }
       }
 
-      Item {
+      PopupSurface {
+          id: surface
           anchors.fill: parent
-          opacity: 0.96
-          Rectangle {
+          open: calendar.open
+
+          FocusScope {
+              id: keyRoot
               anchors.fill: parent
-              color: Colors.bg; radius: 10
-              Rectangle {
-                  anchors.top:   parent.top
-                  anchors.left:  parent.left
-                  anchors.right: parent.right
-                  height: 10; color: Colors.bg
-              }
-          }
-      }
-
-      ColumnLayout {
-          anchors { fill: parent; margins: 10 }
-          spacing: 8
-
-          Rectangle {
-              Layout.fillWidth: true; height: 80; radius: 8; color: Colors.bgAlt
-
-              Text {
-                  anchors.left:           parent.left
-                  anchors.leftMargin:     14
-                  anchors.verticalCenter: parent.verticalCenter
-                  text: calendar.clockH + ":" + calendar.clockM
-                  color: Colors.fg; font.family: "Fira Sans"
-                  font.pixelSize: 54; font.weight: Font.Medium
-              }
-
-              Text {
-                  anchors.right:        parent.right
-                  anchors.rightMargin:  14
-                  anchors.top:          parent.top
-                  anchors.topMargin:    14
-                  text: calendar.dayName
-                  color: Colors.fg; font.family: "Fira Sans"
-                  font.pixelSize: 18; font.weight: Font.Medium
-              }
-
-              Text {
-                  anchors.right:         parent.right
-                  anchors.rightMargin:   14
-                  anchors.bottom:        parent.bottom
-                  anchors.bottomMargin:  14
-                  text: calendar.dateStr
-                  color: Colors.accent; font.family: "Fira Sans"
-                  font.pixelSize: 17
-              }
-          }
-
-          Rectangle {
-              Layout.fillWidth: true
-              id: calendarCard
-              height: 348; radius: 8; color: Colors.bgAlt
+              Keys.onLeftPressed: calendar.step(-1)
+              Keys.onRightPressed: calendar.step(1)
 
               ColumnLayout {
-                  anchors { fill: parent; margins: 12 }
-                  spacing: 6
+                  id: mainCol
+                  anchors { left: parent.left; right: parent.right; top: parent.top }
+                  spacing: Style.space8
 
-                  RowLayout {
+                  // Today
+                  Rectangle {
                       Layout.fillWidth: true
-
-                      Item { width: 28; height: 28
-                          Text { anchors.centerIn: parent; text: "‹"
-                              color: arL.containsMouse ? Colors.fg : Colors.base03
-                              font.pixelSize: 20; font.weight: Font.Medium
-                              Behavior on color { ColorAnimation { duration: 80 } } }
-                          MouseArea { id: arL; anchors.fill: parent; hoverEnabled: true
-                              cursorShape: Qt.PointingHandCursor; onClicked: calendar.prevMonth() }
-                      }
-
-                      Text {
-                          Layout.fillWidth: true; text: calendar.months[calendar.viewMonth-1] + " " + calendar.viewYear
-                          color: Colors.fg; font.family: "Fira Sans"
-                          font.pixelSize: 18; font.weight: Font.Medium
-                          horizontalAlignment: Text.AlignHCenter
-                      }
-
-                      Item { width: 28; height: 28
-                          Text { anchors.centerIn: parent; text: "›"
-                              color: arR.containsMouse ? Colors.fg : Colors.base03
-                              font.pixelSize: 20; font.weight: Font.Medium
-                              Behavior on color { ColorAnimation { duration: 80 } } }
-                          MouseArea { id: arR; anchors.fill: parent; hoverEnabled: true
-                              cursorShape: Qt.PointingHandCursor; onClicked: calendar.nextMonth() }
-                      }
-                  }
-
-                  Row {
-                      Layout.fillWidth: true
-                      spacing: 0
-                      Repeater {
-                          model: calendar.days
+                      implicitHeight: headRow.implicitHeight + Style.space12 * 2
+                      radius: Style.radiusMd
+                      color: Colors.bgAlt
+                      RowLayout {
+                          id: headRow
+                          anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; leftMargin: Style.space16; rightMargin: Style.space16 }
+                          spacing: Style.space16
                           Text {
-                              required property var modelData
-                              width: Math.floor((calendarCard.width - 24) / 7)
-                              text: modelData
-                              color: Colors.fgAlt; font.family: "Fira Sans"
-                              font.pixelSize: 15; horizontalAlignment: Text.AlignHCenter
+                              text: calendar.today.getDate()
+                              color: Colors.fg
+                              font.family: Style.fontFamily; font.pixelSize: 48; font.weight: Font.Medium; font.features: { "tnum": 1 }
+                          }
+                          ColumnLayout {
+                              Layout.fillWidth: true
+                              spacing: Style.space4
+                              Text { text: calendar.dayNames[calendar.today.getDay()]; color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 18; font.weight: Font.Medium }
+                              Text {
+                                  text: calendar.months[calendar.today.getMonth()] + " " + calendar.today.getFullYear() + " · Week " + calendar.isoWeek(calendar.today)
+                                  color: Colors.fgAlt; font.family: Style.fontFamily; font.pixelSize: 13
+                              }
                           }
                       }
                   }
 
-                  Rectangle { Layout.fillWidth: true; height: 1; color: Colors.highlight; opacity: 0.3 }
-
-                  Grid {
+                  // Month
+                  Rectangle {
+                      id: monthCard
                       Layout.fillWidth: true
-                      columns: 7
-                      spacing: 0
-                      horizontalItemAlignment: Grid.AlignHCenter
+                      implicitHeight: monthCol.implicitHeight + Style.space12 * 2
+                      radius: Style.radiusMd
+                      color: Colors.bgAlt
+                      clip: true
 
-                      property int totalDays:  calendar.daysInMonth(calendar.viewYear, calendar.viewMonth)
-                      property int startOff:   calendar.firstWeekday(calendar.viewYear, calendar.viewMonth)
-                      property int todayDay:   new Date().getDate()
-                      property int todayMonth: new Date().getMonth() + 1
-                      property int todayYear:  new Date().getFullYear()
-                      property int cellW:      Math.floor((calendarCard.width - 24) / 7)
+                      ColumnLayout {
+                          id: monthCol
+                          anchors { fill: parent; margins: Style.space12 }
+                          spacing: Style.space6
 
-                      Repeater {
-                          model: 42
-                          delegate: Item {
-                              required property int index
-                              width:  parent.cellW
-                              height: 42
-
-                              property int dayNum: index - parent.startOff + 1
-                              property bool valid: dayNum >= 1 && dayNum <= parent.totalDays
-                              property bool isToday: valid &&
-                                  dayNum === parent.todayDay &&
-                                  calendar.viewMonth === parent.todayMonth &&
-                                  calendar.viewYear  === parent.todayYear
-
-                              Rectangle {
-                                  anchors.centerIn: parent
-                                  width: 32; height: 32; radius: 16
-                                  color: isToday ? Colors.accent : (dMa.containsMouse && valid ? Colors.highlight : "transparent")
-                                  Behavior on color { ColorAnimation { duration: 80 } }
-                              }
-
+                          RowLayout {
+                              Layout.fillWidth: true
+                              spacing: Style.space2
+                              NavButton { iconName: "chevron-left"; Accessible.name: "Previous month"; onClicked: calendar.step(-1) }
                               Text {
-                                  anchors.centerIn: parent
-                                  text: valid ? dayNum.toString() : ""
-                                  color: Colors.fg
-                                  font.family: "Fira Sans"; font.pixelSize: 16
-                                  font.weight: isToday ? Font.Medium : Font.Normal
+                                  Layout.fillWidth: true
+                                  horizontalAlignment: Text.AlignHCenter
+                                  text: calendar.months[calendar.viewMonth] + " " + calendar.viewYear
+                                  color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 15; font.weight: Font.Medium
                               }
+                              NavButton {
+                                  text: "Today"
+                                  visible: calendar.viewMonth !== calendar.today.getMonth() || calendar.viewYear !== calendar.today.getFullYear()
+                                  onClicked: calendar.step(0)
+                              }
+                              NavButton { iconName: "chevron-right"; Accessible.name: "Next month"; onClicked: calendar.step(1) }
+                          }
 
-                              MouseArea {
-                                  id: dMa; anchors.fill: parent
-                                  hoverEnabled: true; cursorShape: valid ? Qt.PointingHandCursor : Qt.ArrowCursor
+                          Row {
+                              Layout.fillWidth: true
+                              Repeater {
+                                  model: calendar.weekdays
+                                  Text {
+                                      required property var modelData
+                                      width: (monthCard.width - Style.space12 * 2) / 7
+                                      height: 24
+                                      text: modelData
+                                      horizontalAlignment: Text.AlignHCenter
+                                      verticalAlignment: Text.AlignVCenter
+                                      color: Colors.fgAlt; font.family: Style.fontFamily; font.pixelSize: 11; font.weight: Font.Medium
+                                  }
                               }
                           }
+                          Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: Colors.border }
+
+                          Item {
+                              Layout.fillWidth: true
+                              implicitHeight: days.implicitHeight
+                              transform: Translate { id: gridShift; x: 0 }
+                              Grid {
+                                  id: days
+                                  width: parent.width
+                                  columns: 7
+
+                                  readonly property int startOff: (new Date(calendar.viewYear, calendar.viewMonth, 1).getDay() + 6) % 7
+                                  readonly property int count: new Date(calendar.viewYear, calendar.viewMonth + 1, 0).getDate()
+                                  readonly property int prevCount: new Date(calendar.viewYear, calendar.viewMonth, 0).getDate()
+
+                                  Repeater {
+                                      model: 42
+                                      Item {
+                                          required property int index
+                                          readonly property int n: index - days.startOff + 1
+                                          readonly property bool inMonth: n >= 1 && n <= days.count
+                                          readonly property int label: n < 1 ? days.prevCount + n : n > days.count ? n - days.count : n
+                                          readonly property bool isToday: inMonth && n === calendar.today.getDate()
+                                              && calendar.viewMonth === calendar.today.getMonth() && calendar.viewYear === calendar.today.getFullYear()
+                                          readonly property bool weekend: index % 7 > 4
+                                          width: days.width / 7
+                                          height: 38
+
+                                          Rectangle {
+                                              anchors.centerIn: parent
+                                              width: 32; height: 32; radius: 16
+                                              color: isToday ? Colors.accent : Colors.highlight
+                                              opacity: isToday ? 1 : (dayMouse.containsMouse ? 1 : 0)
+                                              Behavior on opacity { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                          }
+                                          Text {
+                                              anchors.centerIn: parent
+                                              text: label
+                                              color: isToday ? Colors.onAccent : !inMonth ? Colors.fgMuted : weekend ? Colors.fgAlt : Colors.fg
+                                              font.family: Style.fontFamily; font.pixelSize: 14
+                                              font.weight: isToday ? Font.DemiBold : Font.Normal
+                                              font.features: { "tnum": 1 }
+                                          }
+                                          MouseArea { id: dayMouse; anchors.fill: parent; hoverEnabled: true }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+
+                      MouseArea {
+                          anchors.fill: parent
+                          acceptedButtons: Qt.NoButton
+                          onWheel: (wheel) => calendar.step(wheel.angleDelta.y < 0 ? 1 : -1)
                       }
                   }
               }
           }
-
-          Item { height: 2 }
       }
   }
 ''

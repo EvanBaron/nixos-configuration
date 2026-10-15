@@ -3,162 +3,170 @@
   import Quickshell
   import Quickshell.Wayland
   import Quickshell.Io
+  import Quickshell.Services.Pipewire
   import QtQuick
   import "."
 
   ShellRoot {
       id: root
 
-      property int  processorPercentage:  0
-      property real memoryGigabytes:   0
       property int  volumePercentage:  0
-      property bool volumeMuted:    false
-      property int  batteryPercentage:   0
-      property bool batteryCharging: false
+      property bool volumeMuted:       false
+      property int  batteryPercentage: 0
+      property bool batteryCharging:   false
       property bool calendarVisible:   false
       property bool statisticsVisible: false
-      property var  workspaceData:  []
+      property bool notificationsVisible: false
+      property bool powerVisible: false
+      property var  workspaceData:     []
 
-      property int _lastIdle:  0
-      property int _lastTotal: 0
+      // One popup at a time: opening any of them closes the others.
+      function only(which) {
+          var next = {
+              calendar:      which === "calendar"      && !root.calendarVisible,
+              statistics:    which === "statistics"    && !root.statisticsVisible,
+              controlCenter: which === "controlCenter" && !controlCenter.open,
+              launcher:      which === "launcher"      && !appLauncher.open,
+              notifications: which === "notifications" && !root.notificationsVisible,
+              power:         which === "power"         && !root.powerVisible
+          }
+          root.calendarVisible   = next.calendar
+          root.statisticsVisible = next.statistics
+          controlCenter.open     = next.controlCenter
+          appLauncher.open       = next.launcher
+          root.notificationsVisible = next.notifications
+          root.powerVisible      = next.power
+      }
+      function closeAll() { only("") }
 
-      PanelWindow {
-          id: calendarDismissWindow
+      // Full-screen click catcher behind an open popup; `hole` is the popup's own rectangle.
+      component DismissLayer: PanelWindow {
+          id: layer
+          property bool active: false
+          property rect hole: Qt.rect(0, 0, 0, 0)
           anchors.top: true; anchors.left: true; anchors.right: true; anchors.bottom: true
           color: "transparent"
-          visible: root.calendarVisible
+          visible: active
           WlrLayershell.layer: WlrLayer.Overlay
           WlrLayershell.exclusionMode: ExclusionMode.Ignore
-          WlrLayershell.namespace: "calendar-dismiss"
           WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
           mask: Region {
-              item: calendarDismissMask
-              Region {
-                  x:      calendarPopup.WlrLayershell.margins.left
-                  y:      calendarPopup.WlrLayershell.margins.top
-                  width:  calendarPopup.implicitWidth
-                  height: calendarPopup.implicitHeight
-                  intersection: Intersection.Subtract
-              }
+              item: catcher
+              Region { x: layer.hole.x; y: layer.hole.y; width: layer.hole.width; height: layer.hole.height; intersection: Intersection.Subtract }
           }
-          Rectangle { id: calendarDismissMask; anchors.fill: parent; color: "transparent"
-              MouseArea { anchors.fill: parent; onClicked: root.calendarVisible = false } }
+          Rectangle {
+              id: catcher; anchors.fill: parent; color: "transparent"
+              MouseArea { anchors.fill: parent; onClicked: root.closeAll() }
+          }
       }
 
-      CalendarPopup { id: calendarPopup; visible: root.calendarVisible }
-
-      PanelWindow {
-          id: statisticsDismissWindow
-          anchors.top:true; anchors.left:true; anchors.right:true; anchors.bottom:true
-          color:"transparent"; visible:root.statisticsVisible
-          WlrLayershell.layer:WlrLayer.Overlay; WlrLayershell.exclusionMode:WlrLayershell.Ignore
-          WlrLayershell.namespace:"system-stats-dismiss"; WlrLayershell.keyboardFocus:WlrKeyboardFocus.None
-          mask: Region {
-              item: statisticsDismissMask
-              Region {
-                  x:      statisticsDismissWindow.width - statisticsPopup.WlrLayershell.margins.right - statisticsPopup.implicitWidth
-                  y:      statisticsPopup.WlrLayershell.margins.top
-                  width:  statisticsPopup.implicitWidth
-                  height: statisticsPopup.implicitHeight
-                  intersection: Intersection.Subtract
-              }
-          }
-          Rectangle { id: statisticsDismissMask; anchors.fill:parent; color:"transparent"
-              MouseArea { anchors.fill:parent; onClicked:root.statisticsVisible=false } }
+      CalendarPopup {
+          id: calendarPopup
+          open: root.calendarVisible
+          onCloseRequested: root.calendarVisible = false
+      }
+      DismissLayer {
+          WlrLayershell.namespace: "calendar-dismiss"
+          active: root.calendarVisible
+          hole: Qt.rect(calendarPopup.WlrLayershell.margins.left, calendarPopup.WlrLayershell.margins.top,
+                        calendarPopup.implicitWidth, calendarPopup.implicitHeight)
       }
 
-      StatisticsPopup { id:statisticsPopup; visible:root.statisticsVisible }
+      StatisticsPopup { id: statisticsPopup; open: root.statisticsVisible }
+      DismissLayer {
+          id: statisticsDismiss
+          WlrLayershell.namespace: "system-stats-dismiss"
+          active: root.statisticsVisible
+          hole: Qt.rect(statisticsDismiss.width - statisticsPopup.WlrLayershell.margins.right - statisticsPopup.implicitWidth,
+                        statisticsPopup.WlrLayershell.margins.top, statisticsPopup.implicitWidth, statisticsPopup.implicitHeight)
+      }
 
       AppLauncher { id: appLauncher; screen: Quickshell.screens[0] }
+      DismissLayer { WlrLayershell.namespace: "niri-launcher-dismiss"; active: appLauncher.open }
 
-      PanelWindow {
-          id: launcherDismissWindow
-          anchors.top: true; anchors.left: true; anchors.right: true; anchors.bottom: true
-          color: "transparent"
-          visible: appLauncher.visible
-          WlrLayershell.layer: WlrLayer.Overlay
-          WlrLayershell.exclusionMode: ExclusionMode.Ignore
-          WlrLayershell.namespace: "niri-launcher-dismiss"
-          WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-          Rectangle { anchors.fill: parent; color: "transparent"
-              MouseArea { anchors.fill: parent; onClicked: appLauncher.visible = false } }
+      ControlCenter {
+          id: controlCenter
+          screen: Quickshell.screens[0]
+          volumePercentage: root.volumePercentage
+          volumeMuted: root.volumeMuted
+      }
+      DismissLayer { WlrLayershell.namespace: "controlcenter-dismiss"; active: controlCenter.open }
+
+      NotificationToasts {}
+      NotificationCenter {
+          id: notificationCenter
+          open: root.notificationsVisible
+          onCloseRequested: root.notificationsVisible = false
+      }
+      Binding { target: Notifications; property: "centerOpen"; value: root.notificationsVisible }
+      DismissLayer {
+          id: notificationsDismiss
+          WlrLayershell.namespace: "notification-center-dismiss"
+          active: root.notificationsVisible
+          hole: Qt.rect(notificationsDismiss.width - notificationCenter.WlrLayershell.margins.right - notificationCenter.implicitWidth,
+                        notificationCenter.WlrLayershell.margins.top, notificationCenter.implicitWidth, notificationCenter.implicitHeight)
       }
 
+      PowerMenu {
+          id: powerMenu
+          open: root.powerVisible
+          onCloseRequested: root.powerVisible = false
+      }
+      DismissLayer { WlrLayershell.namespace: "power-menu-dismiss"; active: root.powerVisible }
+
+      IpcHandler { target: "notifications"; function toggle(): void { root.only("notifications") } }
+      IpcHandler {
+          target: "power"
+          function toggle(): void { root.only("power") }
+          function open(): void   { if (!root.powerVisible) root.only("power") }
+      }
       IpcHandler {
           target: "launcher"
-          function toggle(): void { appLauncher.visible = !appLauncher.visible }
-          function open(): void   { appLauncher.visible = true  }
-          function close(): void  { appLauncher.visible = false }
+          function toggle(): void { root.only("launcher") }
+          function open(): void   { if (!appLauncher.open) root.only("launcher") }
+          function close(): void  { appLauncher.open = false }
       }
-
-      Process {
-          id: cpuProcess
-          command: ["sh", "-c", "head -1 /proc/stat"]
-          stdout: SplitParser {
-              onRead: data => {
-                  if (!data) return
-                  var p = data.trim().split(/\s+/)
-                  var idle  = parseInt(p[4]) + parseInt(p[5])
-                  var total = p.slice(1, 8).reduce((a, b) => a + parseInt(b), 0)
-                  if (root._lastTotal > 0 && total > root._lastTotal)
-                      root.processorPercentage = Math.round(100 * (1 - (idle - root._lastIdle) / (total - root._lastTotal)))
-                  root._lastIdle  = idle; root._lastTotal = total
-              }
+      IpcHandler {
+          target: "controlcenter"
+          function toggle(): void { root.only("controlCenter") }
+          // e.g. `quickshell ipc call controlcenter openPage wifi` (main | wifi | bluetooth)
+          function openPage(name: string): void {
+              if (!controlCenter.open) root.only("controlCenter")
+              controlCenter.page = name
           }
+      }
+      IpcHandler { target: "calendar"; function toggle(): void { root.only("calendar") } }
+      IpcHandler { target: "stats"; function toggle(): void { root.only("statistics") } }
+
+      // Volume is pushed by PipeWire; battery is read from sysfs (no polling processes).
+      PwObjectTracker { objects: [ Pipewire.defaultAudioSink ] }
+      readonly property var _sinkAudio: Pipewire.defaultAudioSink ? Pipewire.defaultAudioSink.audio : null
+      Binding { target: root; property: "volumePercentage"; value: root._sinkAudio ? Math.round(root._sinkAudio.volume * 100) : 0; when: root._sinkAudio !== null }
+      Binding { target: root; property: "volumeMuted"; value: root._sinkAudio ? root._sinkAudio.muted : false; when: root._sinkAudio !== null }
+
+      // Network speed and fast sampling are only needed while the statistics popup is open.
+      Binding { target: SystemStats; property: "detailed"; value: root.statisticsVisible }
+
+      property string _batteryPath: ""
+      Process {
+          command: ["sh", "-c", "for b in /sys/class/power_supply/BAT*; do [ -d \"$b\" ] && echo \"$b\" && exit; done"]
+          stdout: SplitParser { onRead: data => root._batteryPath = data.trim() }
           Component.onCompleted: running = true
       }
-      Timer { interval: 2000; running: true; repeat: true; onTriggered: cpuProcess.running = true }
-
-      Process {
-          id: ramProcess
-          command: ["sh", "-c", "free | grep Mem"]
-          stdout: SplitParser {
-              onRead: data => {
-                  if (!data) return
-                  var p = data.trim().split(/\s+/)
-                  root.memoryGigabytes = (parseInt(p[2]) || 0) / 1048576.0
-              }
-          }
-          Component.onCompleted: running = true
+      FileView {
+          id: batCapacity
+          path: root._batteryPath ? root._batteryPath + "/capacity" : ""
+          onTextChanged: { var v = parseInt(text()); if (!isNaN(v)) root.batteryPercentage = v }
       }
-      Timer { interval: 3000; running: true; repeat: true; onTriggered: ramProcess.running = true }
-
-      Process {
-          id: volProc
-          command: ["sh", "-c", "wpctl get-volume @DEFAULT_SINK@"]
-          stdout: SplitParser {
-              onRead: data => {
-                  if (!data) return
-                  root.volumeMuted = data.indexOf("MUTED") !== -1
-                  var m = data.match(/([\d.]+)/)
-                  if (m) root.volumePercentage = Math.round(parseFloat(m[1]) * 100)
-              }
-          }
-          Component.onCompleted: running = true
+      FileView {
+          id: batStatus
+          path: root._batteryPath ? root._batteryPath + "/status" : ""
+          onTextChanged: { var t = text().trim(); root.batteryCharging = t === "Charging" }
       }
-      Timer { interval: 1000; running: true; repeat: true; onTriggered: volProc.running = true }
-
-      Process {
-          id: batProc
-          command: ["sh", "-c", "upower -i $(upower -e | grep 'BAT' | head -n 1) | grep -E 'percentage|state'"]
-          stdout: SplitParser {
-              onRead: data => {
-                  if (!data) return
-                  var lines = data.split('\n')
-                  for (var i = 0; i < lines.length; i++) {
-                      var l = lines[i].trim()
-                      if (l.indexOf("percentage:") !== -1) {
-                          var m = l.match(/(\d+)%/)
-                          if (m) root.batteryPercentage = parseInt(m[1])
-                      } else if (l.indexOf("state:") !== -1) {
-                          root.batteryCharging = l.indexOf("charging") !== -1 && l.indexOf("discharging") === -1
-                      }
-                  }
-              }
-          }
-          Component.onCompleted: running = true
+      Timer {
+          interval: 30000; running: root._batteryPath !== ""; repeat: true
+          onTriggered: { batCapacity.reload(); batStatus.reload() }
       }
-      Timer { interval: 10000; running: true; repeat: true; onTriggered: batProc.running = true }
 
       Process {
           id: workspaceStream
@@ -207,45 +215,28 @@
           root.workspaceData = a
       }
 
-      ControlCenter { 
-          id: controlCenter; 
-          screen: Quickshell.screens[0] 
-          volumePercentage: root.volumePercentage
-          volumeMuted: root.volumeMuted
-      }
-
-      PanelWindow {
-          id: controlCenterDismissWindow
-          anchors.top: true; anchors.left: true; anchors.right: true; anchors.bottom: true
-          color: "transparent"; visible: controlCenter.visible
-          WlrLayershell.layer: WlrLayer.Overlay
-          WlrLayershell.exclusionMode: ExclusionMode.Ignore
-          WlrLayershell.namespace: "controlcenter-dismiss"
-          WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-          Rectangle { anchors.fill: parent; color: "transparent"
-              MouseArea { anchors.fill: parent; onClicked: controlCenter.visible = false } }
-      }
-
-      IpcHandler { target: "controlcenter"; function toggle(): void { controlCenter.visible = !controlCenter.visible } }
-      IpcHandler { target: "calendar"; function toggle(): void { root.calendarVisible = !root.calendarVisible } }
-      IpcHandler { target: "stats"; function toggle(): void { root.statisticsVisible = !root.statisticsVisible } }
-
       Variants {
           model: Quickshell.screens
           ActionBar {
               required property var modelData
-              screen:     modelData
-              processorPercentage:     root.processorPercentage
-              memoryGigabytes:      root.memoryGigabytes
-              volumePercentage:     root.volumePercentage
-              volumeMuted:    root.volumeMuted
-              batteryPercentage:     root.batteryPercentage
-              batteryCharging:       root.batteryCharging
-              workspaceData:     root.workspaceData
-              calendarVisible:   root.calendarVisible
-              onCalendarVisibleChanged:   root.calendarVisible   = calendarVisible
-              statisticsVisible: root.statisticsVisible
-              onStatisticsVisibleChanged: root.statisticsVisible = statisticsVisible
+              screen: modelData
+              processorPercentage: Math.round(SystemStats.cpuPercentage)
+              memoryGigabytes:     SystemStats.memoryGigabytes
+              volumePercentage:    root.volumePercentage
+              volumeMuted:         root.volumeMuted
+              batteryPercentage:   root.batteryPercentage
+              batteryCharging:     root.batteryCharging
+              workspaceData:       root.workspaceData
+              calendarOpen:        root.calendarVisible
+              statisticsOpen:      root.statisticsVisible
+              controlCenterOpen:   controlCenter.open
+              onToggleCalendar:      root.only("calendar")
+              onToggleStatistics:    root.only("statistics")
+              onToggleControlCenter: root.only("controlCenter")
+              notificationsOpen:     root.notificationsVisible
+              powerOpen:             root.powerVisible
+              onToggleNotifications: root.only("notifications")
+              onTogglePower:         root.only("power")
           }
       }
   }

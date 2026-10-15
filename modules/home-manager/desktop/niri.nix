@@ -107,6 +107,9 @@ in
     }
 
     input {
+        // The power key opens the Quickshell power menu (bind below) instead of sleeping.
+        disable-power-key-handling
+
         keyboard {
             xkb {
                 layout "us"
@@ -167,10 +170,6 @@ in
         clip-to-geometry true
     }
 
-    window-rule {
-        match app-id="com.github.ErikReider.swaync"
-        open-floating true
-    }
 
     spawn-at-startup "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
     spawn-at-startup "sh" "-c" "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY && hash dbus-update-activation-environment 2>/dev/null && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP NIRI_SOCKET DISPLAY"
@@ -190,11 +189,12 @@ in
         Mod+D { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "launcher" "toggle"; }
         Mod+Shift+D { spawn "${pkgs.wofi}/bin/wofi" "--show" "drun"; }
         Mod+S { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "controlcenter" "toggle"; }
-        Mod+N { spawn "${pkgs.swaynotificationcenter}/bin/swaync-client" "-t" "-sw"; }
+        Mod+N { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "notifications" "toggle"; }
         Mod+Shift+Q { close-window; }
         Mod+F { maximize-column; }
         Mod+Shift+F { fullscreen-window; }
-        Mod+L { spawn "${pkgs.swaylock-effects}/bin/swaylock" "-fF"; }
+        Mod+Shift+L { spawn "${pkgs.swaylock-effects}/bin/swaylock" "-fF"; }
+        XF86PowerOff { spawn "${pkgs.quickshell}/bin/quickshell" "ipc" "call" "power" "toggle"; }
         Mod+Shift+E { quit; }
         Mod+V { toggle-window-floating; }
 

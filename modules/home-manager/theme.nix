@@ -98,10 +98,6 @@ in
     home.activation.reloadTheme = lib.hm.dag.entryAfter [ "reloadSystemd" ] ''
       if [ -z "''${DRY_RUN:-}" ]; then
         ${pkgs.procps}/bin/pkill -USR1 -x kitty || true
-        # At boot swaync is not running yet and the client hangs on D-Bus.
-        if ${pkgs.procps}/bin/pgrep -x swaync >/dev/null; then
-          ${pkgs.coreutils}/bin/timeout 5 ${pkgs.swaynotificationcenter}/bin/swaync-client -rs >/dev/null 2>&1 || true
-        fi
       fi
     '';
   };
