@@ -4,6 +4,8 @@
 {
   virtualisation.docker = {
     enable = true;
+    # Socket-activated: the rootful daemon only starts when something uses it.
+    enableOnBoot = false;
     extraOptions = "--dns 8.8.8.8 --dns 1.1.1.1";
 
     rootless = {

@@ -17,6 +17,9 @@
   services.sunshine = {
     enable = true;
     capSysAdmin = true;
+    # Holds the NVIDIA GPU open (and captures continuously) while running,
+    # so start it on demand: `systemctl --user start sunshine`.
+    autoStart = false;
     openFirewall = true;
     settings = {
       sunshine_name = "laptop";
