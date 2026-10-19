@@ -1,42 +1,50 @@
 # Android development environment configuration
+#
+# The SDK lives in ~/Android/Sdk (ANDROID_HOME), which stays writable so Gradle
+# can fetch the build-tools/platforms/NDK each project asks for. Nix only
+# provides a bootstrap sdkmanager to fetch cmdline-tools, whose `android sdk`
+# then installs the packages below; run `android-sdk-sync`. No Android Studio
+# involved.
 { pkgs, ... }:
 
 let
-  androidComposition = pkgs.androidenv.composeAndroidPackages {
-    platformVersions = [ "35" "36" ];
-    includeEmulator = true;
-    # AVDs use the images Android Studio downloads into ~/Android/Sdk
-    # (ANDROID_HOME); the Nix ones went unused and cost ~25 GiB per generation.
-    includeSystemImages = false;
-    includeSources = false;
-  };
+  sdk = "/home/ebaron/Android/Sdk";
 
-  # Wrap Android Studio to run emulator on XCB (Wayland fix)
-  androidStudioWrapped = pkgs.symlinkJoin {
-    name = "android-studio-wrapped";
-    paths = [ pkgs.android-studio ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/android-studio \
-        --set QT_QPA_PLATFORM xcb
-    '';
-  };
+  # Packages kept in ~/Android/Sdk; Gradle installs the rest on demand.
+  # cmdline-tools/latest is where avdmanager is looked up by Expo's device hub.
+  sdkPackages = [
+    "cmdline-tools/latest"
+    "platform-tools"
+    "emulator"
+    "system-images/android-36.1/google_apis_playstore_ps16k/x86_64"
+  ];
 
-  # Wrap the emulator binary to force xcb
-  androidSdkWrapped = pkgs.symlinkJoin {
-    name = "android-sdk-wrapped";
-    paths = [ androidComposition.androidsdk ];
-    buildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      wrapProgram $out/bin/emulator \
-        --set QT_QPA_PLATFORM xcb
+  # Only used to bootstrap ~/Android/Sdk; the image-less SDK keeps the store small.
+  bootstrapSdk =
+    (pkgs.androidenv.composeAndroidPackages {
+      platformVersions = [ ];
+      buildToolsVersions = [ ];
+      includeCmake = false;
+    }).androidsdk;
+
+  androidSdkSync = pkgs.writeShellApplication {
+    name = "android-sdk-sync";
+    runtimeInputs = [ pkgs.openjdk17 ];
+    text = ''
+      android="${sdk}/cmdline-tools/latest/bin/android"
+      if [ ! -x "$android" ]; then
+        sdkmanager=$(echo ${bootstrapSdk}/libexec/android-sdk/cmdline-tools/*/bin/sdkmanager)
+        yes | "$sdkmanager" --sdk_root="${sdk}" --licenses > /dev/null || true
+        "$sdkmanager" --sdk_root="${sdk}" "cmdline-tools;latest"
+      fi
+      "$android" --sdk="${sdk}" sdk install ${pkgs.lib.escapeShellArgs sdkPackages} "$@"
     '';
   };
 in
 {
   nixpkgs.config.android_sdk.accept_license = true;
 
-  # Enable nix-ld to run unpatched binaries like the Android emulator
+  # Enable nix-ld to run the unpatched SDK binaries (emulator, adb, aapt2, ...)
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     stdenv.cc.cc
@@ -77,17 +85,15 @@ in
     libglvnd
   ];
 
-  # Install Android development tools
-  environment.systemPackages = [
-    androidStudioWrapped
-    androidSdkWrapped
-    pkgs.android-tools
-  ];
+  environment.systemPackages = [ androidSdkSync ];
 
-  # Set Android SDK path to the user's writable directory
-  # so Android Studio can download and run modern SDK components/AVDs.
   environment.sessionVariables = {
-    ANDROID_HOME = "/home/ebaron/Android/Sdk";
-    ANDROID_SDK_ROOT = "/home/ebaron/Android/Sdk";
+    ANDROID_HOME = sdk;
+    ANDROID_SDK_ROOT = sdk;
+    PATH = [
+      "${sdk}/cmdline-tools/latest/bin"
+      "${sdk}/emulator"
+      "${sdk}/platform-tools"
+    ];
   };
 }
