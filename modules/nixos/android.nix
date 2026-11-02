@@ -85,7 +85,11 @@ in
     libglvnd
   ];
 
-  environment.systemPackages = [ androidSdkSync ];
+  environment.systemPackages = [
+    androidSdkSync
+    # Expo's device hub encodes the emulator stream with ffmpeg/ffprobe
+    pkgs.ffmpeg
+  ];
 
   environment.sessionVariables = {
     ANDROID_HOME = sdk;
