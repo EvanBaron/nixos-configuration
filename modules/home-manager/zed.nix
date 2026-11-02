@@ -189,6 +189,7 @@ in
         basedpyright = {
           binary = {
             path = "basedpyright-langserver";
+            arguments = [ "--stdio" ];
           };
         };
         texlab = {
