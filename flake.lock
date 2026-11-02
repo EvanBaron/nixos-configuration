@@ -242,11 +242,11 @@
     },
     "private": {
       "locked": {
-        "lastModified": 1791964637,
-        "narHash": "sha256-ANNvWMhYBDxNn8ZZY+HamUJn39uI4b3b06qWXdtF+tA=",
+        "lastModified": 1793648554,
+        "narHash": "sha256-mYndGptRJM1ii5/ay71yn5U9tiDbH/8XdBjaauRRqgA=",
         "ref": "refs/heads/main",
-        "rev": "417009421bc8596659a4c0915b5d8876522e3225",
-        "revCount": 3,
+        "rev": "2d800c0140f40d726594d38a6a797edaec981a70",
+        "revCount": 4,
         "type": "git",
         "url": "file:///home/ebaron/nixos-private"
       },

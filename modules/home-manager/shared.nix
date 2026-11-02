@@ -22,7 +22,6 @@
     ./sops.nix
     ./zed.nix
     ./clangd.nix
-    ./opencode.nix
     ./gtk.nix
     ./shell.nix
     ./desktop/niri.nix
