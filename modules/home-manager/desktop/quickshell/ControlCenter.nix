@@ -1,4 +1,4 @@
-{ ... }:
+{ themeTiles, themeSwitchCommand }:
 
 ''
   import Quickshell
@@ -81,6 +81,21 @@
       Process { id: volSet }
       Process { id: muteSet; command: ["wpctl", "set-mute", "@DEFAULT_SINK@", "toggle"] }
       Process { id: brightSet }
+
+      // ── Theme ──
+      readonly property var themes: ${builtins.toJSON themeTiles}
+      property string pendingTheme: ""
+      Process { id: themeSet }
+      // The switch restarts Quickshell; if it never does (failed activation), give the tile back.
+      Timer { id: themeTimeout; interval: 20000; onTriggered: controlCenter.pendingTheme = "" }
+      function switchTheme(key) {
+          var t = themes.filter(x => x.key === key)[0]
+          if (!t || t.current || pendingTheme !== "") return
+          pendingTheme = key
+          themeSet.command = ${builtins.toJSON themeSwitchCommand}.concat([key])
+          themeSet.running = true
+          themeTimeout.restart()
+      }
       Process {
           id: brightGet
           command: ["sh", "-c", "echo $(brightnessctl g) $(brightnessctl m)"]
@@ -296,6 +311,71 @@
                                   text: Math.round(controlCenter.brightnessPercentage) + "%"
                                   horizontalAlignment: Text.AlignRight
                                   color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12; font.features: { "tnum": 1 }
+                              }
+                          }
+                      }
+
+                      // Theme: one tile per theme (its accent on its own ground); the active one is outlined.
+                      ColumnLayout {
+                          Layout.fillWidth: true
+                          spacing: Style.space8
+                          Text { text: "Theme"; color: Colors.fgAlt; font.family: Style.fontFamily; font.pixelSize: 11; font.weight: Font.Medium }
+                          RowLayout {
+                              Layout.fillWidth: true
+                              spacing: Style.space8
+                              Repeater {
+                                  model: controlCenter.themes
+                                  Item {
+                                      id: tile
+                                      required property var modelData
+                                      readonly property bool pending: controlCenter.pendingTheme === modelData.key
+                                      Layout.fillWidth: true
+                                      Layout.preferredHeight: 44
+                                      activeFocusOnTab: true
+                                      Accessible.role: Accessible.RadioButton
+                                      Accessible.name: modelData.label + " theme"
+                                      Accessible.checked: modelData.current
+                                      function activate() { controlCenter.switchTheme(modelData.key) }
+                                      Keys.onSpacePressed: activate()
+                                      Keys.onReturnPressed: activate()
+
+                                      Rectangle {
+                                          anchors.fill: parent
+                                          radius: Style.radiusMd
+                                          color: tileMouse.containsMouse || tile.pending ? Colors.highlight : Colors.bgAlt
+                                          border.width: 1
+                                          border.color: tile.modelData.current ? Colors.accent : "transparent"
+                                          scale: tileMouse.pressed ? 0.97 : 1
+                                          Behavior on color { ColorAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                          Behavior on scale { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                      }
+                                      Row {
+                                          anchors.centerIn: parent
+                                          spacing: Style.space8
+                                          Rectangle {
+                                              anchors.verticalCenter: parent.verticalCenter
+                                              width: 18; height: 18; radius: 9
+                                              color: tile.modelData.ground
+                                              border.width: 1
+                                              border.color: Colors.borderStrong
+                                              Rectangle { anchors.centerIn: parent; width: 10; height: 10; radius: 5; color: tile.modelData.accent }
+                                          }
+                                          Text {
+                                              anchors.verticalCenter: parent.verticalCenter
+                                              text: tile.pending ? "Applying…" : tile.modelData.label
+                                              color: tile.modelData.current || tile.pending ? Colors.fg : Colors.fgAlt
+                                              font.family: Style.fontFamily; font.pixelSize: 13; font.weight: Font.Medium
+                                          }
+                                      }
+                                      FocusRing { targetRadius: Style.radiusMd }
+                                      MouseArea {
+                                          id: tileMouse
+                                          anchors.fill: parent
+                                          hoverEnabled: true
+                                          cursorShape: tile.modelData.current ? Qt.ArrowCursor : Qt.PointingHandCursor
+                                          onClicked: tile.activate()
+                                      }
+                                  }
                               }
                           }
                       }

@@ -2,6 +2,7 @@
 
 {
   config,
+  lib,
   pkgs,
   mylib,
   ...
@@ -9,6 +10,29 @@
 
 let
   palette = config.colorScheme.palette;
+
+  # Theme picker in the control center: one tile per theme, the active one marked.
+  # The switch runs in its own systemd unit because activation restarts Quickshell.
+  themeTiles = map (
+    key:
+    let
+      t = import ../../../../themes/${key}/palette.nix;
+    in
+    {
+      inherit key;
+      label = builtins.head (lib.splitString " " t.name);
+      accent = t.ui.accent;
+      ground = t.palette.base00;
+      current = t.slug == config.colorScheme.slug;
+    }
+  ) (import ../../../../themes);
+  themeSwitchCommand = [
+    "${pkgs.systemd}/bin/systemd-run"
+    "--user"
+    "--collect"
+    "--quiet"
+    "${config.theme.switchPackage}/bin/theme-switch"
+  ];
 
   files = {
     "Colors.qml" = import ./Colors.nix {
@@ -45,7 +69,7 @@ let
     "Bar.qml" = import ./Bar.nix { };
     "ActionBar.qml" = import ./ActionBar.nix { };
     "AppLauncher.qml" = import ./AppLauncher.nix { };
-    "ControlCenter.qml" = import ./ControlCenter.nix { };
+    "ControlCenter.qml" = import ./ControlCenter.nix { inherit themeTiles themeSwitchCommand; };
     "StatisticsPopup.qml" = import ./StatisticsPopup.nix { };
     "SystemStats.qml" = import ./SystemStats.nix { };
     "CalendarPopup.qml" = import ./CalendarPopup.nix { };
