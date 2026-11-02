@@ -1,4 +1,4 @@
-{ hexToRgb }:
+{ hexToRgb, hexToHsl }:
 
 {
   # Generate complete Obsidian theme CSS from color palette
@@ -435,5 +435,14 @@
         --callout-quote: var(--gray_x);
     }
     .callout { background-color: rgba(var(--callout-color), 0.2); }
+
+    /* Accent ("primary") colour, outranking the one picked in Appearance so a
+       theme switch recolours an open vault without touching its settings */
+    body.theme-dark,
+    body.theme-light {
+        --accent-h: ${toString (hexToHsl colors.base06).h};
+        --accent-s: ${toString (hexToHsl colors.base06).s}%;
+        --accent-l: ${toString (hexToHsl colors.base06).l}%;
+    }
   '';
 }

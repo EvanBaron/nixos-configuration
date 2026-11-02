@@ -7,21 +7,35 @@
 }:
 
 let
-  # Generate the theme content using the library function
-  zedThemeContent = mylib.zed {
-    inherit (config) colorScheme;
-    username = config.home.username;
-  };
-
-  zedTheme = pkgs.writeText "zed-theme.json" zedThemeContent;
+  # Install every scheme's theme so switching only has to change `theme` in
+  # settings.json, which Zed hot-reloads; a theme file that appears at the
+  # same moment is not picked up until restart.
+  schemes = map (
+    t:
+    let
+      p = import ../../themes/${t}/palette.nix;
+    in
+    {
+      inherit (p) name;
+      palette = lib.mapAttrs (_: lib.removePrefix "#") p.palette;
+    }
+  ) (import ../../themes);
 in
 {
-  # Place the generated theme file in the correct location
-  home.file.".config/zed/themes/${config.colorScheme.name}.json" = {
-    source = zedTheme;
-    executable = false;
-    force = true;
-  };
+  home.file = lib.listToAttrs (
+    map (
+      colorScheme:
+      lib.nameValuePair ".config/zed/themes/${colorScheme.name}.json" {
+        source = pkgs.writeText "zed-theme.json" (
+          mylib.zed {
+            inherit colorScheme;
+            username = config.home.username;
+          }
+        );
+        force = true;
+      }
+    ) schemes
+  );
 
   home.packages = with pkgs; [
     texlab

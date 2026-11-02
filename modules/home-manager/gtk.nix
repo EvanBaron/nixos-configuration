@@ -18,6 +18,13 @@ let
     ;
 in
 {
+  # gtk.theme.package lands in home.packages, which useUserPackages builds into
+  # the system profile from the base configuration only, so a theme-switch
+  # specialisation would name a theme that isn't installed. Link it from
+  # XDG_DATA_HOME, which each specialisation's activation updates.
+  xdg.dataFile."themes/${config.gtk.theme.name}".source =
+    "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}";
+
   home.pointerCursor = {
     enable = true;
     gtk.enable = true;
