@@ -30,6 +30,9 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 
+  # Lets containers use the GPU through CDI (`docker run --device nvidia.com/gpu=all …`)
+  hardware.nvidia-container-toolkit.enable = true;
+
   environment.sessionVariables = {
     XDG_SESSION_TYPE = "wayland";
     NIXOS_OZONE_WL = "1";

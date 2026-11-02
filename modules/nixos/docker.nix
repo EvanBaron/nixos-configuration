@@ -11,6 +11,8 @@
     rootless = {
       enable = true;
       setSocketVariable = true;
+      # CDI device injection (the NVIDIA GPU, from hardware.nvidia-container-toolkit on NVIDIA hosts).
+      daemon.settings.features.cdi = true;
     };
   };
 
