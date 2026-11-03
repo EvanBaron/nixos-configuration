@@ -65,6 +65,7 @@
       nil
       docker-compose
       thunderbird
+      osu-lazer-bin
     ];
 
     home.sessionVariables = {
