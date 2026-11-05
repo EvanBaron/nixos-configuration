@@ -143,6 +143,18 @@ in
         mouse {
             accel-profile "flat"
         }
+
+        ${
+          if isLaptop then
+            ''
+              // Pin the drawing tablet to the built-in screen instead of spanning every output.
+              tablet {
+                  map-to-output "eDP-1"
+              }
+            ''
+          else
+            ""
+        }
     }
 
     ${
