@@ -18,7 +18,7 @@
       property real volumePercentage: 50
       property bool volumeMuted: false
       property real brightnessPercentage: 80
-      property string page: "main"   // "main" | "wifi" | "bluetooth"
+      property string page: "main"   // "main" | "wifi" | "bluetooth" | "apps"
 
       anchors.top: true
       implicitWidth: 360
@@ -142,6 +142,7 @@
                   anchors { left: parent.left; right: parent.right; top: parent.top }
                   readonly property Item current: controlCenter.page === "wifi" ? wifiPage
                                                 : controlCenter.page === "bluetooth" ? btPage
+                                                : controlCenter.page === "apps" ? appsPage
                                                 : mainCol
                   implicitHeight: current.implicitHeight
                   height: implicitHeight
@@ -167,6 +168,18 @@
                       visible: opacity > 0
                       Behavior on x { SequentialAnimation { PauseAnimation { duration: controlCenter.page === "bluetooth" ? Style.durExit : 0 } NumberAnimation { duration: controlCenter.page === "bluetooth" ? Style.durBase : Style.durExit; easing.type: controlCenter.page === "bluetooth" ? Style.easeOut : Style.easeIn } } }
                       Behavior on opacity { SequentialAnimation { PauseAnimation { duration: controlCenter.page === "bluetooth" ? Style.durExit : 0 } NumberAnimation { duration: controlCenter.page === "bluetooth" ? Style.durBase : Style.durExit; easing.type: controlCenter.page === "bluetooth" ? Style.easeOut : Style.easeIn } } }
+                      onBack: controlCenter.page = "main"
+                  }
+
+                  AppVolumePage {
+                      id: appsPage
+                      width: parent.width
+                      active: controlCenter.open && controlCenter.page === "apps"
+                      x: controlCenter.page === "apps" ? 0 : 24
+                      opacity: controlCenter.page === "apps" ? 1 : 0
+                      visible: opacity > 0
+                      Behavior on x { SequentialAnimation { PauseAnimation { duration: controlCenter.page === "apps" ? Style.durExit : 0 } NumberAnimation { duration: controlCenter.page === "apps" ? Style.durBase : Style.durExit; easing.type: controlCenter.page === "apps" ? Style.easeOut : Style.easeIn } } }
+                      Behavior on opacity { SequentialAnimation { PauseAnimation { duration: controlCenter.page === "apps" ? Style.durExit : 0 } NumberAnimation { duration: controlCenter.page === "apps" ? Style.durBase : Style.durExit; easing.type: controlCenter.page === "apps" ? Style.easeOut : Style.easeIn } } }
                       onBack: controlCenter.page = "main"
                   }
 
@@ -291,6 +304,24 @@
                                   horizontalAlignment: Text.AlignRight
                                   color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12; font.features: { "tnum": 1 }
                               }
+                              // Opens the per-app volume page.
+                              Item {
+                                  Layout.preferredWidth: 24; Layout.preferredHeight: 24
+                                  activeFocusOnTab: true
+                                  Accessible.role: Accessible.Button
+                                  Accessible.name: "App volume"
+                                  Keys.onSpacePressed: controlCenter.page = "apps"
+                                  Keys.onReturnPressed: controlCenter.page = "apps"
+                                  Rectangle {
+                                      anchors.fill: parent; radius: Style.radiusSm
+                                      color: appsMouse.pressed ? Colors.highlight : Colors.bgAlt
+                                      opacity: appsMouse.containsMouse ? 1 : 0
+                                      Behavior on opacity { NumberAnimation { duration: Style.durFast; easing.type: Style.easeOut } }
+                                  }
+                                  Icon { anchors.centerIn: parent; name: "chevron-right"; size: 16; color: appsMouse.containsMouse ? Colors.fg : Colors.fgAlt }
+                                  FocusRing { targetRadius: Style.radiusSm }
+                                  MouseArea { id: appsMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: controlCenter.page = "apps" }
+                              }
                           }
                           RowLayout {
                               Layout.fillWidth: true
@@ -312,11 +343,9 @@
                                   horizontalAlignment: Text.AlignRight
                                   color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12; font.features: { "tnum": 1 }
                               }
+                              Item { Layout.preferredWidth: 24 }   // lines up with the volume row's chevron
                           }
                       }
-
-                      // Per-app volume (hidden when nothing is playing)
-                      AppVolumes { Layout.fillWidth: true }
 
                       // Theme: one tile per theme (its accent on its own ground); the active one is outlined.
                       ColumnLayout {

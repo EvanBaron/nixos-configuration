@@ -6,13 +6,15 @@
   import QtQuick.Layouts
   import "."
 
-  // Per-app volume: one row per application currently playing audio. An app's PipeWire output
-  // streams (a browser opens one per tab) share a row: the slider and the icon (mute) act on all of them.
-  // Hidden when nothing plays.
+  // App volume page of the control center: one row per application currently playing audio.
+  // An app's PipeWire output streams (a browser opens one per tab) share a row: the slider and the
+  // icon (mute) act on all of them.
   ColumnLayout {
       id: root
-      spacing: Style.space8
-      visible: apps.length > 0
+      property bool active: false
+      signal back()
+
+      spacing: Style.space12
 
       readonly property var streams: Pipewire.nodes.values.filter(n => n.type === PwNodeType.AudioOutStream)
       PwObjectTracker { objects: root.streams }
@@ -31,7 +33,22 @@
           return groups
       }
 
-      Text { text: "Apps"; color: Colors.fgAlt; font.family: Style.fontFamily; font.pixelSize: 11; font.weight: Font.Medium }
+      PageHeader {
+          Layout.fillWidth: true
+          title: "App volume"
+          showSwitch: false
+          onBack: root.back()
+      }
+
+      Text {
+          Layout.fillWidth: true
+          Layout.topMargin: Style.space16; Layout.bottomMargin: Style.space16
+          visible: root.apps.length === 0
+          horizontalAlignment: Text.AlignHCenter
+          text: "No apps are playing audio"
+          color: Colors.fgAlt
+          font.family: Style.fontFamily; font.pixelSize: 13
+      }
 
       Repeater {
           model: root.apps
