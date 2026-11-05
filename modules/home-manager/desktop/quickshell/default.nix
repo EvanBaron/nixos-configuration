@@ -74,6 +74,7 @@ let
     "SystemStats.qml" = import ./SystemStats.nix { };
     "CalendarPopup.qml" = import ./CalendarPopup.nix { };
     "ControlCenterSlider.qml" = import ./ControlCenterSlider.nix { };
+    "AppVolumes.qml" = import ./AppVolumes.nix { };
     "ControlCenterToggle.qml" = import ./ControlCenterToggle.nix { };
     "TrayPill.qml" = import ./TrayPill.nix { };
     "SystemTray.qml" = import ./SystemTray.nix { };
@@ -113,6 +114,7 @@ let
     singleton SystemStats 1.0 SystemStats.qml
     CalendarPopup 1.0 CalendarPopup.qml
     ControlCenterSlider 1.0 ControlCenterSlider.qml
+    AppVolumes 1.0 AppVolumes.qml
     ControlCenterToggle 1.0 ControlCenterToggle.qml
     TrayPill 1.0 TrayPill.qml
     SystemTray 1.0 SystemTray.qml

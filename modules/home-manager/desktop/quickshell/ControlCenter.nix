@@ -315,6 +315,9 @@
                           }
                       }
 
+                      // Per-app volume (hidden when nothing is playing)
+                      AppVolumes { Layout.fillWidth: true }
+
                       // Theme: one tile per theme (its accent on its own ground); the active one is outlined.
                       ColumnLayout {
                           Layout.fillWidth: true
