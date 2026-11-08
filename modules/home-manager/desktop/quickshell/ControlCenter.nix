@@ -309,7 +309,7 @@
                                   Layout.preferredWidth: 24; Layout.preferredHeight: 24
                                   activeFocusOnTab: true
                                   Accessible.role: Accessible.Button
-                                  Accessible.name: "App volume"
+                                  Accessible.name: "Audio settings"
                                   Keys.onSpacePressed: controlCenter.page = "apps"
                                   Keys.onReturnPressed: controlCenter.page = "apps"
                                   Rectangle {

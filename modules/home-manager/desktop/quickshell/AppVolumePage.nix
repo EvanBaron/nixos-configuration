@@ -6,8 +6,8 @@
   import QtQuick.Layouts
   import "."
 
-  // App volume page of the control center: one row per application currently playing audio.
-  // An app's PipeWire output streams (a browser opens one per tab) share a row: the slider and the
+  // Audio page of the control center: the default input (microphone) level, then one row per
+  // application currently playing audio. An app's PipeWire output streams (a browser opens one per tab) share a row: the slider and the
   // icon (mute) act on all of them.
   ColumnLayout {
       id: root
@@ -18,6 +18,14 @@
 
       readonly property var streams: Pipewire.nodes.values.filter(n => n.type === PwNodeType.AudioOutStream)
       PwObjectTracker { objects: root.streams }
+
+      // Default input. The slider goes to 150% so a quiet mic can be boosted past unity gain.
+      readonly property var source: Pipewire.defaultAudioSource
+      PwObjectTracker { objects: [ root.source ] }
+      readonly property var sourceAudio: source ? source.audio : null
+      readonly property bool micMuted: sourceAudio ? sourceAudio.muted : false
+      readonly property real micPercent: sourceAudio ? Math.round(sourceAudio.volume * 100) : 0
+      function toggleMic() { if (sourceAudio) sourceAudio.muted = !sourceAudio.muted }
 
       function appName(n) {
           var p = n.properties || {}
@@ -35,9 +43,66 @@
 
       PageHeader {
           Layout.fillWidth: true
-          title: "App volume"
+          title: "Audio"
           showSwitch: false
           onBack: root.back()
+      }
+
+      RowLayout {
+          Layout.fillWidth: true
+          visible: root.sourceAudio !== null
+          spacing: Style.space12
+
+          Item {
+              Layout.preferredWidth: 18; Layout.preferredHeight: 18
+              Layout.alignment: Qt.AlignBottom | Qt.AlignHCenter
+              Layout.bottomMargin: (Style.sliderHeight - 18) / 2
+              activeFocusOnTab: true
+              Accessible.role: Accessible.Button
+              Accessible.name: root.micMuted ? "Unmute microphone" : "Mute microphone"
+              Keys.onSpacePressed: root.toggleMic()
+              Keys.onReturnPressed: root.toggleMic()
+              Icon { anchors.fill: parent; name: root.micMuted ? "mic-off" : "mic"; size: 18; color: micMouse.containsMouse ? Colors.fg : Colors.fgAlt }
+              FocusRing { targetRadius: Style.radiusSm }
+              MouseArea { id: micMouse; anchors.fill: parent; anchors.margins: -6; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.toggleMic() }
+          }
+
+          ColumnLayout {
+              Layout.fillWidth: true
+              spacing: Style.space4
+              Text {
+                  Layout.fillWidth: true
+                  elide: Text.ElideRight
+                  text: root.source ? (root.source.description || root.source.nickname || "Microphone") : "Microphone"
+                  color: root.micMuted ? Colors.fgAlt : Colors.fg
+                  font.family: Style.fontFamily; font.pixelSize: 12
+              }
+              ControlCenterSlider {
+                  Layout.fillWidth: true
+                  maxValue: 150
+                  value: root.micPercent
+                  muted: root.micMuted
+                  Accessible.name: "Microphone volume"
+                  onMoved: (v) => { if (root.sourceAudio) root.sourceAudio.volume = v / 100 }
+              }
+          }
+
+          Text {
+              Layout.preferredWidth: 34
+              Layout.alignment: Qt.AlignBottom
+              Layout.bottomMargin: (Style.sliderHeight - height) / 2
+              text: root.micPercent + "%"
+              horizontalAlignment: Text.AlignRight
+              color: Colors.fg; font.family: Style.fontFamily; font.pixelSize: 12; font.features: { "tnum": 1 }
+          }
+      }
+
+      Rectangle {
+          Layout.fillWidth: true
+          Layout.topMargin: Style.space4; Layout.bottomMargin: Style.space4
+          visible: root.sourceAudio !== null
+          implicitHeight: 1
+          color: Colors.border
       }
 
       Text {
